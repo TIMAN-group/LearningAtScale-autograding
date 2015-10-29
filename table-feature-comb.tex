@@ -1,0 +1,65 @@
+\begin{table}
+    \begin{tabular}{r|l|l}
+        & \textbf{Baseline} & \textbf{SVOR}\\\hline
+
+        \textbf{sim} (3)
+        & 0.9358 $\pm$ 0.0882
+        & \textbf{0.8811 $\pm$ 0.0940}
+        \\\hline
+
+        \textbf{sim + sel} (5)
+        & 0.9566 $\pm$ 0.1677
+        & \textbf{0.8642 $\pm$ 0.0325}
+        \\\hline
+
+        \textbf{toks} (2646)
+        & 0.9075 $\pm$ 0.0789
+        & \textbf{0.7660 $\pm$ 0.0910$^\dagger$}
+        \\\hline
+
+        \textbf{all} (2651)
+        & 0.9792 $\pm$ 0.1568
+        & \textbf{0.7566 $\pm$ 0.0738$^\dagger$}
+        \\\hline
+    \end{tabular}
+    \\\\
+    {\footnotesize
+    $\dagger$: statistically signifigant using an unpaired $t$-test with $p
+    \leq 0.05$.}
+
+    \caption{Effectiveness (in terms of MAE) of incorporating additional
+    features in grade prediction for ``quality'' dimensions using SVOR
+    methods compared to the mode-assigning baseline. Number of features is
+    given in parenthesis.}
+    \label{table:feature-comb}
+\end{table}
+
+\begin{table}
+    \begin{tabular}{r|l|l}
+        & \textbf{Baseline} & \textbf{SVOR}\\\hline
+
+        \textbf{sim} (3)
+        & 0.7906 $\pm$ 0.0771
+        & \textbf{0.7830 $\pm$ 0.0836}
+        \\\hline
+
+        \textbf{sim + sel} (5)
+        & \textbf{0.7623 $\pm$ 0.0649}
+        & 0.7811 $\pm$ 0.0561
+        \\\hline
+
+        \textbf{toks} (2646)
+        & 0.7528 $\pm$ 0.0550
+        & \textbf{0.7415 $\pm$ 0.0597}
+        \\\hline
+
+        \textbf{all} (2651)
+        & \textbf{0.7189 $\pm$ 0.0617}
+        & 0.7226 $\pm$ 0.0527
+        \\\hline
+    \end{tabular}
+
+    \caption{Similar experiment to Table~\ref{table:feature-comb}, but for
+    ``clarity'' dimension.}
+    \label{table:feature-comb-clar}
+\end{table}

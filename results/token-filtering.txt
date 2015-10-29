@@ -1,0 +1,171 @@
+=== Analysis Label ===
+
+# All Tokens (2646 features)
+Baseline average MAE: 0.5792452830188679, stddev: 0.04995548035801405
+SVOR average MAE: 0.5603775000000001, stddev: 0.054062514412946044
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 10 (558 features)
+Baseline average MAE: 0.6415094339622641, stddev: 0.10772907489524679
+SVOR average MAE: 0.5754718000000001, stddev: 0.06157422331592985
+SVOR average MAE on training set: 0.0037037, stddev = 0.0111111
+
+# Tokens with freq >= 20 (383 features)
+Baseline average MAE: 0.5962264150943396, stddev: 0.09056603773584908
+SVOR average MAE: 0.5943397, stddev: 0.09518492634346049
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 100 (144 features)
+Baseline average MAE: 0.5792452830188679, stddev: 0.0446895067257623
+SVOR average MAE: 0.7094341, stddev: 0.08613369739590886
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 200 (61 features)
+Baseline average MAE: 0.6037735849056605, stddev: 0.11352157703012321
+SVOR average MAE: 1.0641513000000002, stddev: 0.13320341953121925
+SVOR average MAE on training set: 0.01851851, stddev = 0.021911410047299556
+
+
+
+=== Answers Label ===
+
+# All Tokens (2646 features)
+Baseline average MAE: 0.5622641509433962, stddev: 0.05584395693188203
+SVOR average MAE: 0.6132076, stddev: 0.05738445291400798
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 10 (558 features)
+Baseline average MAE: 0.5660377358490565, stddev: 0.0430254877395901
+SVOR average MAE: 0.5886793, stddev: 0.05118729122164992
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 20 (383 features)
+Baseline average MAE: 0.5735849056603773, stddev: 0.05283018867924527
+SVOR average MAE: 0.5849058, stddev: 0.055971229832477314
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 100 (144 features)
+Baseline average MAE: 0.5566037735849056, stddev: 0.03980193039571506
+SVOR average MAE: 0.6886794, stddev: 0.09592976508487863
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 200 (61 features)
+Baseline average MAE: 0.5320754716981132, stddev: 0.03939738305249263
+SVOR average MAE: 1.184906, stddev: 0.09539018672798581
+SVOR average MAE on training set: 0.01851852, stddev = 0.020286036877162576
+
+
+
+=== Application Label ===
+
+# All Tokens (2646 features)
+Baseline average MAE: 0.31320754716981136, stddev: 0.06381711141618024
+SVOR average MAE: 0.3716982, stddev: 0.06700087181940247
+SVOR average MAE on training set: 0.00185185, stddev = 0.00555555
+
+# Tokens with freq >= 10 (558 features)
+Baseline average MAE: 0.3132075471698113, stddev: 0.04637058765073399
+SVOR average MAE: 0.3660376, stddev: 0.05858158760771169
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 20 (383 features)
+Baseline average MAE: 0.2981132075471698, stddev: 0.03134575042610594
+SVOR average MAE: 0.37169810000000003, stddev: 0.03380438239770104
+SVOR average MAE on training set: 0.00185185, stddev = 0.00555555
+
+# Tokens with freq >= 100 (144 features)
+Baseline average MAE: 0.32264150943396225, stddev: 0.04732051397729983
+SVOR average MAE: 0.4584905, stddev: 0.07211902146764057
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 200 (61 features)
+Baseline average MAE: 0.2981132075471698, stddev: 0.05048712513305529
+SVOR average MAE: 0.9622647000000001, stddev: 0.11476971139725844
+SVOR average MAE on training set: 0.014814810000000001, stddev = 0.028448686846054953
+
+
+
+=== Clarity Label ===
+
+# All Tokens (2646 features)
+Baseline average MAE: 0.7679245283018867, stddev: 0.07735849056603776
+SVOR average MAE: 0.7584905, stddev: 0.08084645424166727
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 10 (558 features)
+Baseline average MAE: 0.7849056603773585, stddev: 0.0349947867754555
+SVOR average MAE: 0.7433962, stddev: 0.03499492675460258
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 20 (383 features)
+Baseline average MAE: 0.7339622641509433, stddev: 0.07980485276436455
+SVOR average MAE: 0.7622642000000001, stddev: 0.05735375452191424
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 100 (144 features)
+Baseline average MAE: 0.7433962264150943, stddev: 0.07924528301886796
+SVOR average MAE: 0.8886791, stddev: 0.05812406643284693
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 200 (61 features)
+Baseline average MAE: 0.7924528301886793, stddev: 0.06855057405503755
+SVOR average MAE: 1.2245279999999998, stddev: 0.15338670260488682
+SVOR average MAE on training set: 0.01296295, stddev = 0.01666665
+
+
+
+=== Quality Label ===
+
+# All Tokens (2646 features)
+Baseline average MAE: 0.9660377358490566, stddev: 0.10396209293551628
+SVOR average MAE: 0.7584905, stddev: 0.06896478843185122
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 10 (558 features)
+Baseline average MAE: 0.9849056603773585, stddev: 0.1537012215427645
+SVOR average MAE: 0.8150941999999999, stddev: 0.11092015216704312
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 20 (383 features)
+Baseline average MAE: 0.9358490566037736, stddev: 0.06760933157422232
+SVOR average MAE: 0.7773587, stddev: 0.08471690498837876
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 100 (144 features)
+Baseline average MAE: 1.0528301886792453, stddev: 0.12280105732281492
+SVOR average MAE: 0.9226411999999999, stddev: 0.06339685905121797
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 200 (61 features)
+Baseline average MAE: 1.009433962264151, stddev: 0.08148235049694029
+SVOR average MAE: 1.4113209999999998, stddev: 0.16027788172109086
+SVOR average MAE on training set: 0.02037038, stddev = 0.024074093846157534
+
+
+
+=== Questions Label ===
+
+# All Tokens (2646 features)
+Baseline average MAE: 0.5150943396226415, stddev: 0.05600310218738047
+SVOR average MAE: 0.3999999, stddev: 0.07099952546806211
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 10 (558 features)
+Baseline average MAE: 0.5377358490566037, stddev: 0.14350790090419938
+SVOR average MAE: 0.4377357, stddev: 0.06686821563949498
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 20 (383 features)
+Baseline average MAE: 0.5113207547169811, stddev: 0.1218260260932674
+SVOR average MAE: 0.46037720000000004, stddev: 0.04559658228595648
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 100 (144 features)
+Baseline average MAE: 0.49245283018867925, stddev: 0.04656212331793609
+SVOR average MAE: 0.5811322, stddev: 0.04606235515646153
+SVOR average MAE on training set: 0.0, stddev = 0.0
+
+# Tokens with freq >= 200 (61 features)
+Baseline average MAE: 0.49433962264150944, stddev: 0.0538975730456064
+SVOR average MAE: 1.0641511, stddev: 0.1234949264467573
+SVOR average MAE on training set: 0.00925926, stddev = 0.017073240519549882

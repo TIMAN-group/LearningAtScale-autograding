@@ -1,0 +1,177 @@
+\section{Methods for Automated Grading}
+
+In this section, we first provide a general discussion of how we might be able to use machine learning methods for automating the grading of complex assignments, and then present a general methodology for designing three complementary types of features for representing assignments, which are needed for supervised learning. 
+
+\subsection{Unsupervised Learning}
+
+Our first thought is to use unsupervised learning since it does not require any training data (i.e., graded assignments as examples).  In unsupervised learning, a model is built to describe some latent
+structure of the data without considering any label information. Typical
+examples of unsupervised methods include clustering and topic modeling.
+Unsupervised methods have been applied to automated grading typically in
+the form of clustering---the ``latent structure'' to be extracted are
+groups of student submissions, which can then be collectively assigned a
+single grade. Hierarchical clustering methods allow an instructor to
+``drill down'' by dividing a single cluster into several smaller ones that
+somehow capture differences within the same group. This method was
+exploited to great effect by the power grading
+project~\cite{Brooks:2014:Powergrading} to allow instructors to spend
+significantly less time grading short answer questions.
+
+However, this does not address the need to evaluate students along
+different dimensions as occurs in rubric grading for complex assignments.  Because the method does
+not consider the labels in learning the latent structure, the structure it
+finds will tend to be general with no principled way of tuning it to
+better describe the desired label outcomes. Furthermore, this strategy
+also provides no guidance for the instructor in assigning the actual grade
+value itself---while it aids in digesting the patterns that occur in the
+data, the instructor is still on his/her own in deciphering what the grade
+should be based on these patterns. With simple questions with more or less
+one correct answer, this is not a problem---but when we attempt to address
+more complex assignments that involve critical thinking and principled
+analysis (for which there are many ``correct'' answers) this becomes much
+more difficult and time consuming. 
+
+\subsection{Supervised Learning}
+
+Supervised learning is more useful in the sense that such an approach can directly 
+assign a grade to an assignment though it requires some training data. In supervised learning, a model is built to predict the outcome (or label)
+of a new example based on previous examples it has seen before (called the
+training data). A critical component of this infrastructure is the
+decomposition of examples into feature vectors---this decomposition enables
+the use of algorithms for learning functions from these vectors to the
+output labels desired. Typically, these feature vectors are either binary
+or real-valued, and are often (but not always) in a high-dimensional space.
+The performance of the learned function is directly tied to the features
+used in the vector representation of the examples---poor features result
+in low predictive capability due to the algorithm being unable to find
+meaningful patterns in the examples. As such, these features are the most
+critical component of any supervised learning approach. With a properly
+defined set of features that are capable of capturing the salient patterns
+in the training examples, the task can be given to any of a number of
+state-of-the-art algorithms for learning appropriate predictive functions
+that can be applied to yet-unseen data (the test data).
+
+This scenario is applicable to an automated grading setup in which the
+instructor labels a certain number of student assignments with a grade
+which are then fed in to the algorithm to learn a predictive function that,
+when applied to the unlabeled examples, provides a grade based on the
+patterns extracted from the manually graded examples.
+
+This supervised framework would allow instructors to learn a separate
+predictor for each dimension in a rubric by simply changing the labels of
+the training examples to reflect a different rubric dimension during
+training. We will explore supervised learning approaches in this paper to
+address our need for predicting different rubric dimensions instead of a
+single overall grade. In such a setting, the grading problem has been
+reduced to defining a set of features that characterize a student's
+assignment along multiple dimensions.
+
+\subsubsection{Defining Features of a Student Assignment}
+
+The performance of a supervised learning approach is highly dependent on 
+the effectiveness of the features fed into the learning program. Thus a main technical 
+challenge we need to solve is how to design effective features for representing
+an assignment. 
+
+To address this challenge, we propose a general framework for defining features for complex
+assignments such as the one we explore in this paper. The features we
+propose are general in nature and thus should be applicable to any
+assignment that is presented in a text-based, semi-structured response
+form. We describe a set of feature classes and evaluate the performance of
+these features on an example autograding task to evaluate their predictive
+capacity. Our framework consists first of constructing a ``view'' of an
+assignment and then defining features based on this view. The view chosen
+for the assignment is critical in that it changes the way we may naturally
+describe it and thus leads to the definition of distinct classes of
+features distinguished by the view taken to derive them. We will explore
+features by progressively taking views that make stronger assignment design
+assumptions: while the features are still general, each view progressively
+narrows the space of possible student response types.
+
+The first class of features, which we call \textbf{token features}, are
+generated by taking a view of the student response consistent with the
+traditional ``bag of words'' approach common in information retrieval
+contexts~\cite{Salton:1975:VSM}. In this view a document is decomposed into
+a vector of count data that indicates the frequency of words within the
+document. Two features are thus natural. The first type of feature would
+indicate the number of occurrences of a given word in a student submission
+(and is thus real-valued), and the second would indicate the presence or
+absence of a word (and is thus binary-valued). These features would both
+create a high-dimensional representation of the student submission, and are
+motivated by an attempt to capture the difference in vocabulary between
+assignments. This is often enough to capture whether the correct ideas are
+mentioned without requiring extensive computation (features from this class
+are trivial to compute for every student submission). Document
+classification techniques typically operate in this kind of space.
+
+The second class of features, which we call \textbf{similarity features},
+are generated by characterizing a student submission by the ``distance''
+from a gold standard (e.g., an assignment submission generated by the
+instructor). With this view, features can be derived that strongly utilize
+the structure of the assignment (e.g., how closely does the outline
+structure of the student assignment match the outline structure of the
+instructor assignment?)\ as well as features that loosely utilize or
+completely ignore the structure of the assignment. Examples of features
+that loosely utilize the assignment structure would be the similarity of
+certain outline bullet types with the gold standard bullet types of the
+same category. A bullet type in our examples could be ``observation''
+(indicating something selected from the assignment text directly) or
+``analysis'' (indicating original thoughts from the student). These
+features require the assignment to be structured in such a way that this
+information is easily extracted, but do not look so closely at the overall
+structure of the outline itself. Ignoring the structure of the assignment,
+features can be generated that indicate the overall similarity with the
+gold standard. Document clustering techniques typically operate in this
+kind of space, as well as retrieval functions in search
+systems~\cite{Robertson:1994:SIGIR, Robertson:1996:TREC-3}.
+
+The third class of features, which we call \textbf{selection features},
+are generated by measuring concrete statistics about the selection of
+bullet points compared to a gold standard. In some sense, these are similar
+to the similarity features, but they differ in that they make a stronger
+assumption about the assignment structure---namely, that students are
+producing the exact same text that should occur in a similar section of the
+gold standard. Examples of selection features would be precision (what
+fraction of the bullets selected by the student also appear in the gold
+standard?)\ and recall (what fraction of bullets selected in the gold
+standard were also selected by the student?).
+
+\subsection{Active Learning}
+
+One critical problem in the supervised learning setting is the selection
+of a training set. If a non-representative training set is selected, the
+algorithm has no opportunity to learn the features that distinguish the
+excellent submissions from the ordinary submissions. Unfortunately, the
+traditional supervised learning setting offers no principled mechanism for
+picking which training set to use---it just assumes one exists a priori.
+
+Active learning methods bridge this gap by providing a mechanism for
+selecting relevant training examples designed to maximally improve the
+performance of an existing model. This setting is very relevant for an
+autograding setup, where the system should ideally ask the instructor to
+grade a \emph{specific} set of examples, rather than forcing the
+instructor to find good representative examples on his/her own. This
+process can be iterative: the system can learn from the first batch of
+examples graded by the instructor, and then request him/her to grade a
+second batch, which is used to incrementally improve the learned model.
+This should, in principle, reduce the amount of time an instructor would
+have to spend grading to obtain a certain performance threshold for the
+grade predictor.
+
+\subsection{Combined Methods for Complete Grading Support}
+
+A comprehensive system can then be designed that leverages all three of
+these perspectives: unsupervised, (semi-) supervised, and active learning.
+We can first apply an unspervised learning technique to group the student
+assignment data into rough categories. Then, a set of student submissions
+can be sampled from these distinct categories, resulting in a collection of
+submissions that are in some sense different from one another---these
+examples are then labeled by the instructor and used as the starting point
+for an active learning method: we can learn a supervised classifier using
+the now labeled data, use this classifier to separate the remaining
+unlabeled training data, sample more documents for the instructor to label,
+and continue in an iterative fashion until either a fixed evaluation
+criteria is met, or a certain number of submissions have been labeled.
+Such a combined method would attempt to {\bf optimize the collaboration of human graders
+and the automated grading tool}  so that we can leverage the best of each. 
+

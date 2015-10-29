@@ -1,0 +1,56 @@
+\section{Related Work}
+
+To the best of our knowledge, no previous work has studied how to automatically grade
+a complex assignment such as a medical case assessment. However, our work
+is related to multiple lines of existing work, which we briefly review below. 
+
+Automated grading has been explored mostly for constrained question
+types where the correct answer has a certain, well known form. Programming
+assignments, for example, have long been a target for automatic
+grading~\cite{Forsythe:1965:CACM, Hext:1969:CACM, Helmick:2007:ITICSE,
+Martin:1973:SIGCSE} as their very medium can easily be leveraged for
+providing ``yes'' or ``no'' feedback with respect to programmatic
+correctness.
+
+Many techniques for short-answer grading have been explored. Recently,
+clustering-based techniques have been applied to tools designed to help
+instructors manually grade MOOC assignments at scale by allowing them to
+assign grades to entire clusters of students at
+once~\cite{Brooks:2014:Powergrading}. Hierarchical clustering methods were
+applied in this work to allow the instructor to ``drill down'' as far as
+he/she would like to assign grades and feedback to students. This method
+is general and unsupervised, but cannot provide the instructor with a
+suggestion for the grade or feedback so this work must be done manually.
+
+Another approach would be to attempt to predict the grades explicitly. One
+branch of work in this direction based on information extraction techniques
+focuses on extracting fixed patterns from the answer: if the pattern (or
+set of patterns) is matched, the question is correct, otherwise it receives
+partial or no credit. Many methods require the manual construction of these
+patterns~\cite{Mitchell:2002:ICAA, Leacock:2003:CatH}, while others attempt to
+learn them from large training datasets~\cite{Pulman:2005:EdAppsNLP}. In either
+case, the methods require strong supervision support to be effective.  Other
+works take an unsupervised text-similarity approach and compare the student
+answers with a gold standard answer using a wide variety of similarity
+functions~\cite{Mohler:2009:ACL}.
+
+Grading of long-form student answers has also been
+explored~\cite{Balfour:2013, Chen:2014:IRRODL}. In
+\textsc{CarmelTC}~\cite{Rose:2003:HLT-NAACL-EDUC} a combination of topic
+modeling and text classification approaches are taken to score student
+essays. The system attempts to determine which ``key components'' have been
+mentioned in each essay and uses this information to suggest to students
+what components they may be missing. Approaches that purely use document
+similarity metrics~\cite{Duwairi:2006:CHB} or purely supervised
+classifiers~\cite{Larkey:1998:SIGIR} have been used for grading as well.
+
+The task of predicting categorical labels with an implicit ranking (ordinal
+variables) is often solved via ordinal regression
+methods~\cite{McCullagh:1980}. These types of variables (and this
+regression method) is very common in studies in the social sciences where
+survey responses are often measured on scales such as (strongly disagree,
+disagree, neutral, agree, strongly agree) which are called Likert
+scales~\cite{Likert:1932}. Our work in predicting the grade labels for
+different dimensions of an assignment's rubric can be seen as yet another
+application of ordinal regression to the many applications already
+explored.

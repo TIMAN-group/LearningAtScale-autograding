@@ -1,0 +1,16 @@
+=== Analysis label ===
+
+# Similarity features (3)
+Baseline average MAE: 0.6113207547169812, stddev: 0.09441506417507022
+SVOR average MAE: 0.5886793, stddev: 0.062463850251245304
+SVOR average MAE on training set: 0.5555556, stddev = 0.07267196907501543
+
+# Similarity + precision/recall features (5)
+Baseline average MAE: 0.5981132075471699, stddev: 0.03584905660377358
+SVOR average MAE: 0.5679245999999999, stddev: 0.07329409599033199
+SVOR average MAE on training set: 0.5185185999999999, stddev = 0.08646404693882886
+
+# Similarity + precision/recall + all tokens (2651)
+Baseline average MAE: 0.6471698113207547, stddev: 0.06909371103245494
+SVOR average MAE: 0.5415095999999999, stddev: 0.048509477554803664
+SVOR average MAE on training set: 0.0, stddev = 0.0

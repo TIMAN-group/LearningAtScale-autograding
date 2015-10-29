@@ -1,0 +1,197 @@
+\section{Experiments}
+
+In this section, we perform some experiments that focus specifically on the
+(semi-) supervised methods detailed in the previous section, which we view
+as the starting point towards a more comprehensive method for grading
+complex assignments. We detail our empirical findings on an example
+dataset to evaluate our proposed method.
+
+\subsection{Dataset}
+
+Our data consist of $n = 107$ student submissions for one medical case
+analysis assignment in a veterinary medicine course at XXXX institution.
+Each was graded along six different rubric dimensions (abbreviations
+bolded): \textbf{analysis} of argument, approach in seeking
+\textbf{answers}, \textbf{application} of disciplinary content,
+\textbf{clarity} of communication, judgement of \textbf{quality} of
+information, and developing relevant refining \textbf{questions}. Student
+submissions were given an ordinal rating on a five level scale from novice
+(1) to expert (5) along each dimension---we report the mean rank and
+standard deviation for each of the six labels in
+Table~\ref{table:grade-stats}. The ordinal regression task is then to
+learn a separate function to predict the rating for each of the six
+dimensions using features extracted from the student documents.
+
+\input{table-grade-stats.tex}
+
+\subsection{Ordinal Regression Feasibility Study}
+
+Because of the ordinal nature of our grade labels (categorical with an
+implicit ranking), it is natural to apply ordinal regression techniques to
+our automated grading setup. These methods fall into the category of
+supervised learning. In particular, we will utilize support vector
+ordinal regression (SVOR)~\cite{Chu:2007:SVOR}, a generalization of the
+popular support vector machine (SVM)~\cite{Cortes:1995:SVM} for
+classification to the case of ordinal labels.
+
+\subsubsection{Sensitivity to Training Size}
+We first explored using only the most general of our feature types---token
+features---to attempt to understand the sensitivity of the method to the
+amount of student submissions labeled. Frequency-based token features were
+extracted: we used the \textsc{MeTA}
+toolkit\footnote{\url{https://meta-toolkit.github.io/meta/}} at version 1.1
+with its default tokenizer, stemmer, and stopword list. For regression, we
+used a modified version of \textsc{LIBSVM} adapted to ordinal
+regression\footnote{\url{http://www.work.caltech.edu/~htlin/program/libsvm/}}.
+
+In an actual grading scenario, the instructor would manually grade a
+certain number of the submissions, learn the regression function from these
+labeled examples, and then apply the learned model to the remaining
+unlabeled examples. To simulate this, we ran the following experiments: for
+each rubric dimension, we took the collection of student documents and
+randomly split it into two groups (the training and test sets) of specific
+sizes, slowly increasing the size of the training set (and thus decreasing
+the size of the test set). A function is learned based on the labeled
+training set which is then used to label the examples in the test set. We
+compute the \textbf{mean absolute error} (MAE), defined as
+\[
+MAE = \frac{1}{n} \sum_{i=1}^n | r(f(x_i)) - r(y_i) |
+\]
+where $f(x_i)$ is the predicted label of the example $x_i$, $r(\cdot)$ is
+the rank of a given label, and $y_i$ is the gold standard label for the
+example $x_i$. This experiment is repeated for ten different randomized
+splits, and we report the average and standard deviation of the test set
+MAE in Table~\ref{table:train-set-size}. Note that due to the difference in the 
+test set, the results from different sizes of training sets are not strictly comparable. 
+
+\input{table-train-set.tex}
+
+There are a few things that we can observe from these results.  Perhaps
+unsurprisingly, the rubric labels with the least variation are the easiest
+to predict (e.g., ``application'' and ``questions'')---these dimensions
+seem to benefit the least from the inclusion of more training examples.
+The more difficult dimensions with higher data variance (e.g.,
+``quality'') benefit more strongly from the inclusion of more training
+data---more examples allow the method to better capture the
+\emph{generalizable} patterns that apply to unseen examples.
+
+\subsubsection{Overfitting}
+A concern with complicated models such as SVMs, especially when applied to
+small datasets with high dimensionality, is that of overfitting: the
+training data is essentially memorized, causing the output function to
+fail to perform well on new examples due to its failure to capture
+patterns that generalize~\cite{Dietterich:1995:ACMCS}. Feature selection is
+a method that can combat this in which only a subset of the possible
+features in a given type are used~\cite{Guyon:2003:JMLR}. In our setup, we had
+2646 total token features, which we attempted to reduce by only considering
+tokens that had a total collection frequency above a certain threshold $k \in
+\{10, 20, 100, 200\}$ resulting in 558, 383, 144, and 61 features,
+respectively.  Unfortunately, this selection method failed to reduce the
+overfitting phenomena, likely due to data sparsity. It would be worth exploring
+more principled feature selection in future work, as this should in principle
+improve the model's generalization.
+
+\subsubsection{The Impact of Different Feature Types}
+Moving beyond simple token features, we extracted both similarity and
+selection features from our assignments and incorporated them
+incrementally into our model to measure the predictive capacity of
+different feature types.
+
+Our token features were generated using the same process detailed
+previously (frequency-based features extracted using the \textsc{MeTA}
+toolkit).
+
+Our similarity features (compared against an instructor-generated
+assignment submission) were overall similarity, similarity of only
+observation bullets, and similarity of only analysis bullets---these were
+computed using the Okapi BM25 similarity function often used in information
+retrieval as a scoring function~\cite{Robertson:1994:SIGIR,
+Robertson:1996:TREC-3}. The instructor submission was treated as a query
+and the student submissions as documents to be scored by utilizing the
+following function:
+\begin{align*}
+    score(Q, D) &= \sum_{w \in Q \cup D} QTF(w, Q) \cdot TF(w, D) \cdot
+IDF(w)\\
+\intertext{where}
+    QTF(w, Q) &= \frac{(k_3 + 1)c(w, Q)}{k_3 + c(w, Q)},\\
+    TF(w, D) &= \frac{(k_1 + 1)c(w,D)}{k_1 + ((1-b) + b \cdot
+\frac{|D|}{avdl}) + c(w,D)},\\
+    IDF(w) &= \frac{N - df(w) + 0.5}{df(w) + 0.5},
+\end{align*}
+
+and $c(w, Q)$ is the frequency of the word $w$ in the query, $c(w, D)$ is
+the frequency of the word $w$ in the document to be scored, $|D|$ is the
+length of the document, $avdl$ is the average document length, $N$ is the
+total number of documents, and $df(w)$ is the number of documents in which
+the term $w$ appears. $k_1 = 1.2$, $k_3 = 500$, and $b = 0.75$ are
+parameters which were set to heuristic defaults. This function has been
+shown to be very robust, capturing a large number of important information
+retrieval heuristics~\cite{Fang:2005:Axiomatic}, motivating our choice.
+
+Our selection features were precision and recall of the
+selected lab data in the student case analysis when compared against the
+instructor's assignment.
+
+We investigate the predictive capacity of these features by exploring the
+improvement of the model when predicting our most challenging labels
+(``quality'' and ``clarity''). We ran ten separate experiments with
+different randomized training sets consisting of 50\% of the data when
+using different feature combinations to represent the student submissions.
+We again report the average and standard deviation of the MAE on the test
+set across the ten runs. To further explore whether the regression method
+is truly capturing patterns relevant for grading, we compare its MAE
+against the MAE obtained by using a na\"ive baseline: compute the most
+frequent label in the training data, and then assign this label to all
+examples in the test set.  Intuitively, this is a very reasonable baseline
+when comparing MAE---if the labels are normally distributed, picking the
+most frequent one will ensure an absolute error of zero for the majority of
+the examples---while simultaneously being unhelpful for discriminative
+grading (which the regression method hopes to capture). Our results are
+summarized in
+Tables~\ref{table:feature-comb}~and~\ref{table:feature-comb-clar}.
+
+\input{table-feature-comb.tex}
+
+We see that for the ``quality'' dimension, the model is able to
+successfully learn generalizable patterns in our features to predict the
+label with errors that are statistically significantly less than the
+baseline method. In general, the token features dominate the performance,
+but it would seem as though the similarity and selection features have
+lower variability in the MAE. Again, this result suggests that there are
+likely gains to be had by utilizing a more sophisticated feature selection
+method to remove some of the noise introduced by extraneous token features.
+
+However, the ``clarity'' label shows us that the problem is far from being
+solved in a general sense. Here, we see that our method consistently fails
+to beat the baseline method, with the winning method being seemingly
+random. This indicates that the features we have selected thus far are more
+tailored toward discrimination along certain dimensions of the grading
+rubric than others. More work must be placed into developing features that
+truly capture the ``clarity'' dimension to allow the model to extract the
+patterns the instructor observes when grading along this dimension.
+
+What this demonstrates is that automatic grading of complex assignments is
+currently feasible, but perhaps only in a limited fashion. Careful feature
+generation is required, but in some cases a model can be learned to
+effectively grade assignments. We suspect that significant gains in
+grading performance can be obtained in other dimensions through careful
+feature generation.
+
+% no time for this?
+% \subsection{Active Learning Approach}
+
+%* Data sets
+%
+%* Evaluation metrics
+%
+%* Experiment design (Procedure)
+%
+%* Experiment results
+%
+%** Basic ordinal regression (first cut of feasibility study)
+%
+%** Feature selection to help avoid overfitting
+%
+%** Binary categorization: comparison of features; vary training set size? 
+%
+%** Active learning: show that active learning is better for suggesting examples to grade. 
