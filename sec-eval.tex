@@ -261,15 +261,15 @@ experiment.
     \begin{axis}[xlabel={human-labeled pairs},ylabel={NDPM}, xmax=500,
       legend style={font=\small}]
 
-      \addplot+[color=red, each nth point={10}, mark=triangle, error
-        bars/.cd, y dir=both, y explicit]
-          table [x=training-size, y=AVG-NDPM, y error=std-deviation, col
-          sep=comma] {data/random-learning.csv};
-
-      \addplot+[color=blue, each nth point={10}, mark=x, error bars/.cd, y
-        dir=both, y explicit]
+      \addplot+[color=red, each nth point={10}, filter discard
+          warning=false, mark=triangle, error bars/.cd, y dir=both, y explicit]
         table [x=training-size, y=AVG-NDPM, y error=std-deviation, col
-        sep=comma] {data/active-learning.csv};
+            sep=comma] {data/random-learning.csv};
+
+      \addplot+[color=blue, each nth point={10}, filter discard
+          warning=false, mark=x, error bars/.cd, y dir=both, y explicit]
+        table [x=training-size, y=AVG-NDPM, y error=std-deviation, col
+          sep=comma] {data/active-learning.csv};
 
       \addplot[mark=none, color=green]
         coordinates {(0, 0.344637) (500, 0.344637)};
