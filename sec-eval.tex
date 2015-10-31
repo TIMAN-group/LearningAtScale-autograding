@@ -4,7 +4,7 @@ In this section, we perform some experiments that focus specifically on the
 (semi-) supervised methods detailed in the previous section, which we view
 as the starting point towards a more comprehensive method for grading
 complex assignments. We detail our empirical findings on an example
-dataset to evaluate our proposed method.
+dataset to evaluate our proposed methods.
 
 \subsection{Dataset}
 
@@ -39,7 +39,7 @@ We first explored using only the most general of our feature types---token
 features---to attempt to understand the sensitivity of the method to the
 amount of student submissions labeled. Frequency-based token features were
 extracted: we used the \textsc{MeTA}
-toolkit\footnote{\url{https://meta-toolkit.github.io/meta/}} at version 1.1
+toolkit\footnote{\url{https://meta-toolkit.org}} at version 1.1
 with its default tokenizer, stemmer, and stopword list. For regression, we
 used a modified version of \textsc{LIBSVM} adapted to ordinal
 regression\footnote{\url{http://www.work.caltech.edu/~htlin/program/libsvm/}}.
@@ -177,7 +177,83 @@ effectively grade assignments. We suspect that significant gains in
 grading performance can be obtained in other dimensions through careful
 feature generation.
 
-\subsection{An Active Learning Approach}
+\subsection{An Active Learning to Rank Approach}
+Supervised learning, however, is not a particularly good fit for grading
+practices in reality for a number of reasons. First, as we observed in
+Tables~\ref{table:feature-comb}~and~\ref{table:feature-comb-clar}, outright
+prediction of an ordinal grade can be very challenging due to the highly
+concentrated nature of the dataset labels (see
+Table~\ref{table:grade-stats}). The vast majority of grade information
+available for the grade prediction task is centered around the mean,
+leaving very little information in the tails for a supervised learner to
+extract patterns from. (In some cases, for example, there are as few as one
+example for the highest and lowest ordinal grade values). The result is
+noisy output that may be inappropriate for using directly. However, it is
+worth noting that ordinal grade prediction is a hard problem, even for
+humans: a previous study suggests disagreement rates around $44\%$ for
+short answer grading~\cite{Mohler:2009:EACL}. We suspect that this only
+becomes larger as assignments become more complex and difficult to grade,
+which makes the task of outright label prediction much more difficult for
+the machine as well.
+
+Perhaps a more reasonable approach, then, is to produce a ranked list of
+assignments from best to worst. Annotators are typically more consistent at
+providing judgments of the form ``is $a$ better than $b$?''\ than ``on a
+scale from 1--5, how good is $a$?''~\cite{Callison-Burch:2007:WMT}, so it
+is reasonable to suspect that a machine learning model could achieve better
+results when trained using such pairwise judgments. If a system can provide
+a good ranking of assignments, an instructor simply needs to assign
+``cutoff'' points in this ranking to determine grades. This simplifies the
+learning problem from attempting to predict an ordinal label for a specific
+assignment to assigning a ranking to a set of assignments. This is a well
+studied area in information retrieval called ``learning to
+rank''~\cite{Joachims:2002:KDD}, and there are a wide variety of methods
+available that one can use to learn a ranking function for documents given
+a set of available features.
+
+Second, a serious drawback of the supervised learning approach is the lack
+of early feedback in the instructor--machine collaboration. In the
+supervised approach, a model is learned on some subset of the assignments
+to predict the grades of the remaining assignments, but the process of
+selecting a subset of assignments for grading is not guided. It is possible
+that randomly selecting assignments to grade results in mostly redundant
+information being given to the grading model. Instead, a better approach
+could be to employ active learning to allow the machine learning model to
+guide the instructor in providing the supervision to make the most
+effective use of his/her effort.
+
+Building on these two observations, we propose the following ``pairwise
+active learning to rank'' model for automatic grading, which will employ
+the following process:
+\begin{enumerate}
+  \item Ask the instructor for comparative judgments on $k_1$ pairs of
+    assignments.
+  \item Learn a model using a learning-to-rank approach on the available
+    pairwise judgments.\label{al:learn-model-step}
+  \item Apply the model to all remaining unjudged pairs.
+  \item Select an unjudged pair to present to the instructor for judgment.
+    \label{al:select-training-step}
+  \item Go to step~\ref{al:learn-model-step}.
+\end{enumerate}
+Instantiations of this general approach will differ mainly in
+steps~\ref{al:learn-model-step}~and~\ref{al:select-training-step}.
+
+Before we explore the efficacy of such an approach, however, we must first
+redefine some measure by which we can measure performance. Because the
+system is no longer predicting a rating for each assignment, we cannot use
+MAE as before.
+
+\subsubsection{Evaluating Ranking-based Grading Systems}
+
+\textbf{TODO: add in discussion of kendall's $\tau$, $\tau_b$, Goodman and
+Kruskal's $\gamma$, and finally NDPM.}
+
+\subsubsection{Efficiently Utilizing Human Judgments with Active Learning}
+To study whether our proposed active learning approach better utilizes
+human judgments during the grading process, we performed the following
+experiment.
+
+\textbf{TODO: Fill in experiment details.}
 
 \begin{figure}
   \begin{center}
@@ -208,40 +284,3 @@ feature generation.
   \label{fig:active-learning}
   \end{center}
 \end{figure}
-
-Supervised learning, however, is not a particularly good fit for grading
-practices in reality for a number of reasons. First, as we observed in
-Tables~\ref{table:feature-comb}~and~\ref{table:feature-comb-clar}, outright
-prediction of an ordinal grade can be very challenging due to the highly
-concentrated nature of the dataset labels (see
-Table~\ref{table:grade-stats}). The vast majority of grade information
-available for the grade prediction task is centered around the mean,
-leaving very little information in the tails for a supervised learner to
-extract patterns from. (In some cases, for example, there are as few as one
-example for the highest and lowest ordinal grade values). The result is
-noisy output that may be inappropriate for using directly. However, it is
-worth noting that ordinal grade prediction is a hard problem, even for
-humans. There is also
-the issue that some subset of the assignments receive explicit instructor
-grading while the remaining receive only the attention of the
-machine---this discrepancy may not be fair to the students who do not get
-graded directly by the instructor.
-
-% no time for this?
-% \subsection{Active Learning Approach}
-
-%* Data sets
-%
-%* Evaluation metrics
-%
-%* Experiment design (Procedure)
-%
-%* Experiment results
-%
-%** Basic ordinal regression (first cut of feasibility study)
-%
-%** Feature selection to help avoid overfitting
-%
-%** Binary categorization: comparison of features; vary training set size?
-%
-%** Active learning: show that active learning is better for suggesting examples to grade.
