@@ -39,14 +39,30 @@ low-quality work from a sample of graded assignments (i.e., ``training
 data''), thus potentially assigning a grade automatically to an ungraded
 assignment.
 
-Although this idea is natural, however, there are many challenges and
+Although this idea is natural and appealing, however, there are many challenges and
 questions that we must address before we can effectively deploy such a
 technology in a real education environment, and a main goal of this paper
 is to take a first step toward systematically addressing these questions,
 including specifically the following questions:
 
 \begin{enumerate}
-\item How exactly should such an automated grader be integrated with
+\item {\bf Feasibility:} How feasible is it to use machine learning to automate grading of a complex assignment? 
+What general features can we extract from assignments for automated
+ grading? How effective are the state of the art machine learning approaches
+ for automated grading? Are they sufficiently effective to be immediately
+ useful in practice?
+
+\item {\bf Problem Formulation and Evaluation:}  How should we formulate the grading problem as a machine learning
+ problem? There are at least two options. One is to frame it as a
+ classification problem with the goal of classifying an assignment into one
+ of the finite number of pre-defined grade levels based on the rubrics. The
+ other is to frame it as a ranking problem where the goal is to rank the
+ assignments based on the quality without necessarily assigning a specific
+ level of grade, and human graders can then go through the ranked list to
+ segment the assignments into different grade levels. How should we design evaluation metrics
+to measure the quality of the results of automated grading? 
+
+\item {\bf Integration of Automated Grading and Human Grading:} How exactly should such an automated grader be integrated with
  instructor or TA grading? A more general question is: how can we optimize
  the collaboration of an imperfect automated grader with more reliable
  human graders? Intuitively, the optimization depends on a trade-off between
@@ -55,21 +71,6 @@ including specifically the following questions:
  way to have the automated grader to assist human in grading, and to have
  humans to help train the machine learning-based automated grader?
 
-\item How should we formulate the grading problem as a machine learning
- problem? There are at least two options. One is to frame it as a
- classification problem with the goal of classifying an assignment into one
- of the finite number of pre-defined grade levels based on the rubrics. The
- other is to frame it as a ranking problem where the goal is to rank the
- assignments based on the quality without necessarily assigning a specific
- level of grade, and human graders can then go through the ranked list to
- segment the assignments into different grade levels.
-
-\item What features should we extract from assignments for automated
- grading? What features are most useful?
-
-\item How effective are the state of the art machine learning approaches
- for automated grading? Are they sufficiently effective to be immediately
- useful in practice?
 \end{enumerate}
 
 We will study these questions using a particular type of complex
@@ -108,10 +109,11 @@ challenges in automatic evaluation of the case studies completed by the
 students, which we address in this paper by leveraging information
 retrieval and machine learning techniques.
 
-Specifically, we formulate the automated grading problem as a machine
-learning problem and propose a general methodology for designing three
+To study the feasibility questions, we propose a general methodology for designing three
 complementary types of feature representations of such complex assignments,
-including token features, similarity features, and selection features.  The
+including token features, similarity features, and selection features, and experiment
+with these features using ordinal regression for predicting the grade levels in multiple
+dimensions of rubrics.  The
 token features are based on the term tokens extracted from an assignment
 and they offer the most general and robust representation. The similarity
 features are to capture the similarity between an assignment and the
@@ -134,20 +136,31 @@ our experiments, we used a data set of 107 student submissions for one
 medical case assessment assignment that are available to us. While the data
 set is small, we were able to observe statistically significant differences
 in our experiments, thus it still allows us to draw meaningful conclusions
-about different approaches to automated grading.
+about different approaches to automated grading. 
 
-Our study with this data set shows that [{\bf FILL IN major conclusions,
- findings here; tie them to some of the questions we raised if possible}:
- (1) it is feasible to automate grading of such assignments using standard
- machine learning approaches and our proposed features provided the
- instructor can grade a small number of examples, but the grading accuracy
- on different rubric categories vary substantially.  (2) In general, the
- accuracy of automated grading highly depends on the effectiveness of
- features, thus careful feature engineering tailored towards specific
- grading criteria are critical for the feasibility of autograding.  (3)
-..... (4) ..... ].
+Our study with this data set shows that it is feasible to automate grading of 
+a complex assignment such as medical case assessment using standard
+ machine learning approaches and the proposed three kinds of general features 
+provided the instructor can grade a small number of examples, but 
+the grading accuracy on different rubric categories vary substantially. 
+
+The results of our feasibility study reveal that there is a great deal of 
+variation in the grades given by instructorrs due to the inevitable subjectivity of the rubrics. 
+This suggests that  it might be less effort and more reliable for an instructor to make pairwise judgments between
+a pair of assignments  as opposed to assigning an exact numerical or letter grade. Working 
+on such pairwise preference judgments also makes it easy to integrate
+ non-expert judgments (such as peer grading) that might not be reliable in the exact grades assigned but may include relatively reliable preference judgments. Moreover, working on pairwise preferences naturally ``eliminate" the need for normalizing numerical grades which might be biased 
+(e.g., some graders may be overly generous).  
+%as well  imagine having peer graders provide the higher-accuracy, bias-free "which is better" judgments rather than having to assign their peers a specific grade. These judgments can then be used as supervision, perhaps with different instance weights than if they were coming from an instructor.
+Given that we will attempt to obtain pairwise preferences as training examples, it follows that we should frame the problem of automated grading as to rank the ungraded assignments, as opposed to predict the exact grade of an assignment. The ranking would be in descending order of quality (in any rubric dimension or overall quality with consideration of multiple dimensions), and a human grader can  then easily segment the list into any desired grade levels.  In comparison with predicting exact grades, such a ranking formulation also offers a natural way to engage humans in validating and finalizing the grades. 
+%In comparison with directly assigning a grade level to each assignment using machine learning, such a ranking
+%strategy has several advantages: .... {\bf [list the benefits or our motivation  here]}. 
+For evaluation, althoough retrieval measures such as Mean Average Precision (MAP) or normalized Discounted Cumulative Gain (nDCG) are commonly used for evaluating a ranked list, we suggest that the Normalized Distance-based Performance Measure (NDPM) is a better measure for our ranking problem since it can better handle many ties that inevitably exist in our case. 
+
+In practice, an automated grader must be integrated with a human grader so as to minimize the overall effort of the human grader while ensuring a certain level of grading accuracy. There is an inherent tradeoff here since to increase the grading accuracy, we would like to have as many training examples (i.e., manually graded assignments) as possible, which, however, would incur more human effort. To optimize human-machine collaboration and enable a flexible tradeoff between human effort and grading accuracy, we propose the following sequential
+training process based on active machine learning: 1) human grader first grades a small number of assignments as the initial training set; 2) the machine would learn from the intial set, and identify the next ``best" example (i.e., assignment) to label and present it for human to grade where ``best" means that the example is most valuable to help the automated grader improve its accuracy; 3) human would grade the nominated example to increase the size of the training set by one; 4) machine would learn from the augmented training set and repeatedly present a new example for human to grade until it reaches a desired level of accuracy, at which point, the process stops and the human grader would segment the final ranked list to generate grades for all the assignments. Our experiment results show that such an active learning process is much more effective than batch training. 
 
 As the first study of this new problem, our study is inevitably limited by
-the size of the data set; as the automated grading technology matures for
+the size of the data set due to the unavailability of larger data sets; as the automated grading technology matures for
 such assignments, we anticipate to have much larger data sets available to
 further verify our observations and conclusions.
