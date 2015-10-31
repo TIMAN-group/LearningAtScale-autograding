@@ -42,7 +42,8 @@ essays. The system attempts to determine which ``key components'' have been
 mentioned in each essay and uses this information to suggest to students
 what components they may be missing. Approaches that purely use document
 similarity metrics~\cite{Duwairi:2006:CHB} or purely supervised
-classifiers~\cite{Larkey:1998:SIGIR} have been used for grading as well.
+classifiers~\cite{Larkey:1998:SIGIR} have been used for grading as well, but the rubrics
+are not as complex as those required for medical case assessment. 
 
 The task of predicting categorical labels with an implicit ranking (ordinal
 variables) is often solved via ordinal regression
@@ -53,4 +54,13 @@ disagree, neutral, agree, strongly agree) which are called Likert
 scales~\cite{Likert:1932}. Our work in predicting the grade labels for
 different dimensions of an assignment's rubric can be seen as yet another
 application of ordinal regression to the many applications already
-explored.
+explored. Using machine learning for optimizing ranking has been 
+extensively in information retrieval (see, e.g., \cite{Liu:2009}); our work explores 
+an interesting novel application of online active learning to automated grading 
+where we are interested in minimizing the training sample to label
+while maximizing the ranking accuracy over a finite number of known test cases.  
+
+
+
+
+
