@@ -13,7 +13,7 @@ analysis assignment in a veterinary medicine course at XXXX institution.
 Each was graded along six different rubric dimensions (abbreviations
 bolded): \textbf{analysis} of argument, approach in seeking
 \textbf{answers}, \textbf{application} of disciplinary content,
-\textbf{clarity} of communication, judgement of \textbf{quality} of
+\textbf{clarity} of communication, judgment of \textbf{quality} of
 information, and developing relevant refining \textbf{questions}. Student
 submissions were given an ordinal rating on a five level scale from novice
 (1) to expert (5) along each dimension---we report the mean rank and
@@ -41,8 +41,9 @@ amount of student submissions labeled. Frequency-based token features were
 extracted: we used the \textsc{MeTA}
 toolkit\footnote{\url{https://meta-toolkit.org}} at version 1.1
 with its default tokenizer, stemmer, and stopword list. For regression, we
-used a modified version of \textsc{LIBSVM} adapted to ordinal
-regression\footnote{\url{http://www.work.caltech.edu/~htlin/program/libsvm/}}.
+used a modified version of
+\textsc{LIBSVM}\footnote{\url{http://www.work.caltech.edu/~htlin/program/libsvm/}}
+adapted to ordinal regression~\cite{Li:2007:NIPS}.
 
 In an actual grading scenario, the instructor would manually grade a
 certain number of the submissions, learn the regression function from these
@@ -62,7 +63,8 @@ the rank of a given label, and $y_i$ is the gold standard label for the
 example $x_i$. This experiment is repeated for ten different randomized
 splits, and we report the average and standard deviation of the test set
 MAE in Table~\ref{table:train-set-size}. Note that due to the difference in the
-test set, the results from different sizes of training sets are not strictly comparable.
+test set, the results from different sizes of training sets are not strictly
+comparable.
 
 \input{table-train-set.tex}
 
@@ -244,16 +246,111 @@ system is no longer predicting a rating for each assignment, we cannot use
 MAE as before.
 
 \subsubsection{Evaluating Ranking-based Grading Systems}
+Our goal is to produce a ranking of student assignments that is consistent
+with instructor evaluation. One way of framing this problem is to compare
+the ranking produced by the system to the ranking produced by the
+instructor (which we'll call the ``reference ranking''). A system's ranking
+can then be evaluated using some measure of correlation between the two
+rankings. We note a preference for metrics that take into account the
+\emph{entire} ranked list---this contrasts with most of the preferred
+measures in information retrieval evaluation which typically place heavier
+emphasis on the top-ranked elements. While this makes sense in a search
+context, our goal is to produce an exhaustive ranking of the assignments,
+so we focus on these types of measures.
 
-\textbf{TODO: add in discussion of kendall's $\tau$, $\tau_b$, Goodman and
-Kruskal's $\gamma$, and finally NDPM.}
+Measures for rank correlation are plentiful. Perhaps the most commonly
+used metrics are Kendall's $\tau$ or Spearman's $\rho$ (which have been
+found to be highly correlated in practice~\cite{Shani:2011:Springer}; thus,
+we present only one for illustration). Kendall's $\tau$ can be formulated
+as
+\[
+    \tau = \frac{n_c - n_d}{\frac{1}{2} n (n-1)},
+\]
+where $n_c$ is the number of \emph{concordant pairs}, and $n_d$ is the number
+of \emph{discordant pairs}, and $n$ is the number of items ranked. To
+compute $n_c$ and $n_d$, one considers all pairs $(x_i, y_i)$ and $(x_j,
+y_j)$ (that is, pairs of tuples) of assigned rankings in the system ranking
+$X$ and the reference ranking $Y$ (the denominator is simply the number of
+such pairs). A pair is \emph{concordant} if the ordering of the items $i$
+and $j$ in $X$ and $Y$ is consistent---in other words, if $(x_i < x_j)
+\land (y_i < y_j)$ or $(x_i > x_j) \land (y_i > y_j)$.  A pair is
+\emph{discordant} if the ordering of items in the two lists is
+inconsistent---in other words, if $(x_i < x_j) \land (y_i > y_j)$ or $(x_i
+> x_j) \land (y_i < y_j)$. This is then a correlation measure, with values
+bounded in $[-1, 1]$, with $1$ indicating a perfect correlation and $-1$
+indicating inverse correlation.
+
+One of the assumptions Kendall's $\tau$ makes is that there are no ties in
+ranks. However, in a realistic grading scenario based on rubrics we expect
+many ties. Fortunately, there is a variation of Kendall's $\tau$, denoted
+as $\tau_b$, that accounts for ties in the rankings. This is formulated as
+\[
+    \tau_b = \frac{n_c - n_d}{\sqrt{(n_c + n_d + t_x)(n_c + n_d + t_y)}}
+\]
+where $t_x$ is the number of pairs that were tied on \emph{only} their
+ranking from $X$, and $t_y$ is the number of pairs that were tied on
+\emph{only} their ranking from $Y$.
+
+This may, at first glance then, seem like a good measure to use, but it is
+not without its problems. Despite taking into account ties in the rankings,
+it may still penalize a system for re-ordering items that were tied in the
+reference ranking---in other words, we may be penalized for not correctly
+identifying elements who are tied in the reference ranking. Consider a
+simple example: suppose the ranking proposed by a system is $X =
+(1,2,3,4,5,6)$ but the reference ranking is $Y = (1,1,2,2,3,4)$.
+Intuitively, the system made no real mistakes in that no pair where the
+reference ranking asserted an is in the wrong order in $X$. However, we'll
+see that $\tau_b \approx 0.9309$, indicating that the system did not achieve
+perfect correlation.
+
+To address this issue, Yao~\cite{Yao:1995:JASIS} proposed the normalized
+distance-based performance measure (NDPM), which computes a distance
+between two rankings that is insensitive to a system's reordering of tied
+elements in the reference ranking. NDPM is computed as
+\[
+    NDPM = \frac{2n_d + t_x}{2(n_c + n_d + t_x)}.
+\]
+Note that this is a \emph{distance} measure, so a value of $0$ would
+indicate a perfect ranking. Indeed, if we compute NDPM for the example
+rankings above, we achieve this result. Thus, we feel that NDPM is perhaps
+the most appropriate measure for evaluating automatic grading systems that
+produce an ordering of assignments as their output.
 
 \subsubsection{Efficiently Utilizing Human Judgments with Active Learning}
 To study whether our proposed active learning approach better utilizes
 human judgments during the grading process, we performed the following
-experiment.
+experiment. We took our assignments and assigned each a ``composite
+score'', computed as the average of their ordinal score for each of the six
+rubric dimensions. Our task is then to learn a ranking that is consistent
+with the ranking produced by these composite scores while simultaneously
+\emph{minimizing instructor effort} in providing the necessary supervision.
 
-\textbf{TODO: Fill in experiment details.}
+We first transform the $n = 107$ assignments into $\frac{1}{2}n(n-1) =
+5671$ assignment \emph{pairs} $(x_i, x_j)$ with corresponding labels
+$y_{ij} \in \{+1, -1\}$ indicating whether $x_i$ should be ranked above or
+below $x_j$ in the ranking. Ties were broken arbitrarily by assignment id.
+The supervision given by the instructor is then to indicate a preference
+for ranking $x_i$ relative to $x_j$.
+
+Following the process laid out in the beginning of the section, we first
+start with $k_1 = 10$ random pairs selected from the transformed data and
+ask for labels from the instructor. We then learn the model, compute the
+NDPM for the ranking produced by the model for all $n$ assignments, and
+then ask for additional supervision by selecting the unlabeled assignment
+pair whose distance from the decision boundary for the model is lowest
+(this is a known, simple approach to uncertainty
+sampling~\cite{Settles:2012}) and repeat the training/evaluation loop. Our
+particular model choice was a linear SVM provided through the \textsc{MeTA}
+toolkit.
+
+We compare this active learning scenario with two different baselines. The
+first is a simple na\"ive approach that ranks all student assignments by
+their BM25 similarity with the instructor document as a query. Our other
+baseline is the exact same process as above, but instead of selecting the
+most uncertain pair in the unlabeled data we select one uniformly at
+random. This will allow us to see whether the uncertainty sampling approach
+is truly helping to guide the learning process to make more efficient
+supervision choices or not.
 
 \begin{figure}
   \begin{center}
@@ -284,3 +381,14 @@ experiment.
   \label{fig:active-learning}
   \end{center}
 \end{figure}
+
+Our results are summarized in Figure~\ref{fig:active-learning}. We can
+immediately observe that the learning-based approaches significantly
+outperform the na\"ive text-similarity ranking baseline, which should be
+expected. More importantly is the difference between the active learning
+method (blue line) and the random learning method (red line). We can see
+that even at a small fraction of all of the assignment pairs, the active
+learning approach is able to achieve better NDPM than simply learning at
+random. This is consistent with our hypothesis that active learning as part
+of an automatic grading system can make more effective use of an
+instructor's time than a purely passive supervised approach.
