@@ -1,36 +1,49 @@
-\documentclass{sigchi}
-
-% Use this command to override the default ACM copyright statement (e.g. for preprints).
-% Consult the conference website for the camera-ready copyright statement.
-
-
-%% EXAMPLE BEGIN -- HOW TO OVERRIDE THE DEFAULT COPYRIGHT STRIP -- (July 22, 2013 - Paul Baumann)
-% \toappear{Permission to make digital or hard copies of all or part of this work for personal or classroom use is 	granted without fee provided that copies are not made or distributed for profit or commercial advantage and that copies bear this notice and the full citation on the first page. Copyrights for components of this work owned by others than ACM must be honored. Abstracting with credit is permitted. To copy otherwise, or republish, to post on servers or to redistribute to lists, requires prior specific permission and/or a fee. Request permissions from permissions@acm.org. \\
-% {\emph{CHI'14}}, April 26--May 1, 2014, Toronto, Canada. \\
-% Copyright \copyright~2014 ACM ISBN/14/04...\$15.00. \\
-% DOI string from ACM form confirmation}
-%% EXAMPLE END -- HOW TO OVERRIDE THE DEFAULT COPYRIGHT STRIP -- (July 22, 2013 - Paul Baumann)
-
+\documentclass[submission]{sigchi}
 
 % Arabic page numbers for submission.
 % Remove this line to eliminate page numbers for the camera ready copy
-% \pagenumbering{arabic}
-
+\pagenumbering{arabic}
 
 % Load basic packages
 \usepackage{balance}  % to better equalize the last page
-\usepackage{graphics} % for EPS, load graphicx instead
-\usepackage{times}    % comment if you want LaTeX's default font
-\usepackage{url}      % llt: nicely formatted URLs
-\usepackage{cite}
+\usepackage{graphics} % for EPS, load graphicx instead 
+\usepackage[T1]{fontenc}
+\usepackage{txfonts}
+\usepackage{mathptmx}
+\usepackage[pdftex]{hyperref}
+\usepackage{color}
+\usepackage{booktabs}
+\usepackage{textcomp}
+% Some optional stuff you might like/need.
+\usepackage{microtype} % Improved Tracking and Kerning
+% \usepackage[all]{hypcap}  % Fixes bug in hyperref caption linking
+\usepackage{ccicons}  % Cite your images correctly!
+\usepackage[utf8]{inputenc} % for a UTF8 editor only
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+\pgfplotsset{compat=1.12}
+
+% Paper metadata (use plain text, for PDF inclusion and later
+% re-using, if desired).  Use \emtpyauthor when submitting for review
+% so you remain anonymous.
+\def\plaintitle{An Exploration of Automated Grading of Complex Assignments}
+\def\plainauthor{First Author, Second Author, Third Author}
+\def\emptyauthor{}
+\def\plainkeywords{Automatic grading; ordinal regression; supervised
+learning; text mining}
 
 % llt: Define a global style for URLs, rather that the default one
 \makeatletter
 \def\url@leostyle{%
-  \@ifundefined{selectfont}{\def\UrlFont{\sf}}{\def\UrlFont{\small\bf\ttfamily}}}
+  \@ifundefined{selectfont}{
+    \def\UrlFont{\sf}
+  }{
+    \def\UrlFont{\small\bf\ttfamily}
+  }}
 \makeatother
 \urlstyle{leo}
-
 
 % To make various LaTeX processors do the right thing with page size.
 \def\pprw{8.5in}
@@ -41,50 +54,45 @@
 \setlength{\pdfpagewidth}{\pprw}
 \setlength{\pdfpageheight}{\pprh}
 
-% Make sure hyperref comes last of your loaded packages,
-% to give it a fighting chance of not being over-written,
-% since its job is to redefine many LaTeX commands.
-\usepackage[pdftex]{hyperref}
-\hypersetup{
-pdftitle={SIGCHI Conference Proceedings Format},
-pdfauthor={LaTeX},
-pdfkeywords={SIGCHI, proceedings, archival format},
-bookmarksnumbered,
-pdfstartview={FitH},
-colorlinks,
-citecolor=black,
-filecolor=black,
-linkcolor=black,
-urlcolor=black,
-breaklinks=true,
+% Make sure hyperref comes last of your loaded packages, to give it a
+% fighting chance of not being over-written, since its job is to
+% redefine many LaTeX commands.
+\definecolor{linkColor}{RGB}{6,125,233}
+\hypersetup{%
+  pdftitle={\plaintitle},
+% Use \plainauthor for final version.
+%  pdfauthor={\plainauthor},
+  pdfauthor={\emptyauthor},
+  pdfkeywords={\plainkeywords},
+  bookmarksnumbered,
+  pdfstartview={FitH},
+  colorlinks,
+  citecolor=black,
+  filecolor=black,
+  linkcolor=black,
+  urlcolor=linkColor,
+  breaklinks=true,
+  hypertexnames=false
 }
 
-% create a shortcut to typeset table headings
-\newcommand\tabhead[1]{\small\textbf{#1}}
-
-
-% End of preamble. Here it comes the document.
 \begin{document}
 
-\title{An Exploration of Automated Grading of Complex Assignments}
+\title{\plaintitle}
 
 \numberofauthors{3}
-\author{
-  \alignauthor 1st Author Name\\
-    \affaddr{Affiliation}\\
-    \affaddr{Address}\\
-    \email{e-mail address}\\
-    \affaddr{Optional phone number}
-  \alignauthor 2nd Author Name\\
-    \affaddr{Affiliation}\\
-    \affaddr{Address}\\
-    \email{e-mail address}\\
-    \affaddr{Optional phone number}
-  \alignauthor 3rd Author Name\\
-    \affaddr{Affiliation}\\
-    \affaddr{Address}\\
-    \email{e-mail address}\\
-    \affaddr{Optional phone number}
+\author{%
+  \alignauthor{Leave Authors Anonymous\\
+    \affaddr{for Submission}\\
+    \affaddr{City, Country}\\
+    \email{e-mail address}}\\
+  \alignauthor{Leave Authors Anonymous\\
+    \affaddr{for Submission}\\
+    \affaddr{City, Country}\\
+    \email{e-mail address}}\\
+  \alignauthor{Leave Authors Anonymous\\
+    \affaddr{for Submission}\\
+    \affaddr{City, Country}\\
+    \email{e-mail address}}\\
 }
 
 \maketitle
@@ -103,14 +111,11 @@ examples. However, careful feature engineering tailored towards specific
 grading criteria is critical for the feasibility of autograding. 
 \end{abstract}
 
-\keywords{
-  Automatic grading; ordinal regression; supervised learning; text mining
-}
+\keywords{\plainkeywords}
 
 \category{H.2.8}{Database Applications}{Data mining}
 
 \input{sec-intro}
-
 
 \input{sec-related}
 
@@ -122,15 +127,12 @@ grading criteria is critical for the feasibility of autograding.
 
 \input{sec-conclu}
 
-
-
-
 \section{Acknowledgments}
 
 Anonymized for blind reviewing.
 
 \balance
 
-\bibliographystyle{acm-sigchi}
+\bibliographystyle{SIGCHI-Reference-Format}
 \bibliography{auto-grading}
 \end{document}
