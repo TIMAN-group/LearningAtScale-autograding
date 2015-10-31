@@ -137,7 +137,6 @@ standard?)\ and recall (what fraction of bullets selected in the gold
 standard were also selected by the student?).
 
 \subsection{Active Learning}
-
 One critical problem in the supervised learning setting is the selection
 of a training set. If a non-representative training set is selected, the
 algorithm has no opportunity to learn the features that distinguish the
@@ -145,12 +144,12 @@ excellent submissions from the ordinary submissions. Unfortunately, the
 traditional supervised learning setting offers no principled mechanism for
 picking which training set to use---it just assumes one exists a priori.
 
-Active learning methods bridge this gap by providing a mechanism for
-selecting relevant training examples designed to maximally improve the
-performance of an existing model. This setting is very relevant for an
-autograding setup, where the system should ideally ask the instructor to
-grade a \emph{specific} set of examples, rather than forcing the
-instructor to find good representative examples on his/her own. This
+Active learning methods~\cite{Settles:2012} bridge this gap by providing a
+mechanism for selecting relevant training examples designed to maximally
+improve the performance of an existing model. This setting is very relevant
+for an autograding setup, where the system should ideally ask the
+instructor to grade a \emph{specific} set of examples, rather than forcing
+the instructor to find good representative examples on his/her own. This
 process can be iterative: the system can learn from the first batch of
 examples graded by the instructor, and then request him/her to grade a
 second batch, which is used to incrementally improve the learned model.
@@ -162,7 +161,7 @@ grade predictor.
 
 A comprehensive system can then be designed that leverages all three of
 these perspectives: unsupervised, (semi-) supervised, and active learning.
-We can first apply an unspervised learning technique to group the student
+We can first apply an unsupervised learning technique to group the student
 assignment data into rough categories. Then, a set of student submissions
 can be sampled from these distinct categories, resulting in a collection of
 submissions that are in some sense different from one another---these
@@ -172,6 +171,6 @@ the now labeled data, use this classifier to separate the remaining
 unlabeled training data, sample more documents for the instructor to label,
 and continue in an iterative fashion until either a fixed evaluation
 criteria is met, or a certain number of submissions have been labeled.
-Such a combined method would attempt to {\bf optimize the collaboration of human graders
-and the automated grading tool}  so that we can leverage the best of each. 
-
+Such a combined method would attempt to {\bf optimize the collaboration of
+human graders and the automated grading tool}  so that we can leverage the
+best of each.
