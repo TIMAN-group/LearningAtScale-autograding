@@ -20,54 +20,74 @@ approach: discrepancy between peer and instructor ratings, variation in
 ratings over time by the same peer rater, inconsistency across exercises
 for rating two works of similar quality, differences in rater stringency,
 and random fluctuation of ratings of the same work under varied
-conditions~\cite{Suen:2014}. 
-Preliminary data from a recent attempt to use this technique with
-veterinary students has also shown that peer reviews have a distinct
-positive bias (vide infra) relative to an expert instructor
-analysis~\cite{Ferguson:2014}.
- Thus it is important to develop more
+conditions~\cite{Suen:2014}.  Preliminary data from a recent attempt to use
+this technique with veterinary students has also shown that peer reviews
+have a distinct positive bias (vide infra) relative to an expert instructor
+analysis~\cite{Ferguson:2014}.  Thus it is important to develop more
 powerful automatic grading technology that can be applied to more
 sophisticated exercises than those provided by the current MOOCs, which are
 necessary in many education scenarios.
 
+To automate grading of such a complex assignment, a natural idea is to use
+supervised machine learning to learn from the graded examples for
+automatically assigning grades to those ungraded ones. As in other machine
+learning applications, the general idea here is that if we can extract
+those features from the assignments that can indicate the quality of an
+assignment, a machine learning program would be able to pick up the
+patterns of the features that can distinguish high-quality work from
+low-quality work from a sample of graded assignments (i.e., ``training
+data''), thus potentially assigning a grade automatically to an ungraded
+assignment.
 
+Although this idea is natural, however, there are many challenges and
+questions that we must address before we can effectively deploy such a
+technology in a real education environment, and a main goal of this paper
+is to take a first step toward systematically addressing these questions,
+including specifically the following questions:
 
-To automate grading of such a complex assignment, a natural idea is to
-use supervised machine learning to learn from the graded examples for
-automatically assigning grades to those ungraded ones. As in other machine learning
-applicatioins, the general idea here is that if we can extract those features from the assignments that can indicate
-the quality of an assignment, a machine learning program would be able to pick up
-the patterns of the features that can distinguish high-quality work from low-quality work from a sample of graded assignments (i.e., ``training data"),  
-thus potentially assigning a grade automatically to an ungraded assignment.  
-
-Although this idea is natural, however, there are many challenges and questions that we must address before we can 
-effectively deploy such a technology in a real education environment, and a main goal of this paper is 
-to take a first step toward systematically addressing these questions, including specifically the following questions: 
- 
 \begin{enumerate}
-\item How exactly should such an automated grader be integrated with instructor or TA grading? A more general question is: how can we optimize the collaboration of an imperfect automated grader with more reliable human graders? Intuitively, the optimization depends on a tradeoff between the quality/reliability of grading and the amount of human effort required. But given an expected amount of human effort, what is the best way to have the automated grader to assist human in grading, and to have humans to help train the machine learning-based automated grader?
+\item How exactly should such an automated grader be integrated with
+ instructor or TA grading? A more general question is: how can we optimize
+ the collaboration of an imperfect automated grader with more reliable
+ human graders? Intuitively, the optimization depends on a trade-off between
+ the quality/reliability of grading and the amount of human effort
+ required. But given an expected amount of human effort, what is the best
+ way to have the automated grader to assist human in grading, and to have
+ humans to help train the machine learning-based automated grader?
 
-\item How should we formally the grading problem as a machine learning problem? There are at least two options. One is to frame it as a classification problem with the goal of classifying an assignment into one of the finite number of pre-defined grade levels based on the rubrics. The other is to frame it as a ranking problem where the goal is to rank the assignments based on the quality without necessarily assigning a specific level of grade, and human graders can then go through the ranked list to segment the assignments into different grade levels. 
+\item How should we formulate the grading problem as a machine learning
+ problem? There are at least two options. One is to frame it as a
+ classification problem with the goal of classifying an assignment into one
+ of the finite number of pre-defined grade levels based on the rubrics. The
+ other is to frame it as a ranking problem where the goal is to rank the
+ assignments based on the quality without necessarily assigning a specific
+ level of grade, and human graders can then go through the ranked list to
+ segment the assignments into different grade levels.
 
-\item What features should we extract from assignments for automated grading? What features are most useful? 
+\item What features should we extract from assignments for automated
+ grading? What features are most useful?
 
-\item How effective are the state of the art machine learning approaches for automated grading? Are they sufficiently effective to be immediately useful in practice? 
-
+\item How effective are the state of the art machine learning approaches
+ for automated grading? Are they sufficiently effective to be immediately
+ useful in practice?
 \end{enumerate}
 
-We will study these questions using a particular type of complex assignments that require sophisticated critical thinking skills, i.e., medical case assessment. This kind of assignments are very important for medical professional education. Thus by studying 
-how to automate grading for medical assessment assignments, we can potentially enable medical professional education to scale up, a much needed effort. Traditional
+We will study these questions using a particular type of complex
+assignments that require sophisticated critical thinking skills, i.e.,
+medical case assessment. This kind of assignments are very important for
+medical professional education. Thus by studying how to automate grading
+for medical assessment assignments, we can potentially enable medical
+professional education to scale up, a much needed effort. Traditional
 veterinary curricula have usually consisted of didactic lectures for as
-long as 3 years before entry into the clinic. In veterinary medicine, this approach has been shown
-to result in an actual decline in critical thinking
+long as 3 years before entry into the clinic. In veterinary medicine, this
+approach has been shown to result in an actual decline in critical thinking
 skills~\cite{Herron:1992}. Therefore, to encourage self-awareness and
 lifelong learning, didactic instruction should be supplemented by practice
 with the process of information gathering and critical clinical thinking
 associated with diagnosis of disease and selection of treatment. In her
 book on critical thinking in clinical practice~\cite{Gambrill:2005},
-Gambrill notes that evidence-based practice is rooted in a willingness
-to recognize the intrinsic uncertainty of
-clinical decision-making.  
+Gambrill notes that evidence-based practice is rooted in a willingness to
+recognize the intrinsic uncertainty of clinical decision-making.
 %Not all clinicians are willing to acknowledge
 %this uncertainty in their mission to help patients. This deficiency in
 %training in critical clinical thinking is thus not unique to our veterinary
@@ -77,7 +97,7 @@ been referred to as ``the greatest deficiency of medical education
 throughout the twentieth century''~\cite{Djulbegovic:2004, Gambrill:2005}.
 Evidence-based medicine (EBM) requires the skillset to develop answerable
 questions relevant to a case, and to answer these questions with an honest
-and open appraisal of research findings~\cite{Braddock:1999}.  
+and open appraisal of research findings~\cite{Braddock:1999}.
 Learning by doing is emphasized in EBM and evaluation of case
 studies provides such practice. Instructors need to be prepared to provide
 structure to the process together with timely feedback during practice in
@@ -86,40 +106,48 @@ such an instruction plan with an online education system at large scale
 raises many significant challenges that must be solved, particularly
 challenges in automatic evaluation of the case studies completed by the
 students, which we address in this paper by leveraging information
-retrieval and machine learning techniques. 
+retrieval and machine learning techniques.
 
-Specifically, we formulate the automated grading problem as a machine learning problem
-and propose a general methodology for designing three complementary types of 
-feature representations of such complex assignments, including token features, 
-similarity features, and selection features. 
-The token features are based on the term tokens extracted from an assignment
-and they offer the most general and robust representation. The similarity features
-are to capture the similarity between an assignment and the solution provided by an instructor;
-the intuition is that the higher the similarity is, the higher the grade should be. 
-Finally, the selection features are to quantify the accuracy of the selection of relevant
-parts in a case description based on how well the selected parts match the solutions. 
-While it is generally beneficial to manually design assignment-specific features, such features cannot
- be generalized to work on other assignments, in this paper, we focus on studying
-{\em general} features that can be {\em automatically computed} on any semi-structured complex assignments, 
-and aim at understanding their effectiveness. 
+Specifically, we formulate the automated grading problem as a machine
+learning problem and propose a general methodology for designing three
+complementary types of feature representations of such complex assignments,
+including token features, similarity features, and selection features.  The
+token features are based on the term tokens extracted from an assignment
+and they offer the most general and robust representation. The similarity
+features are to capture the similarity between an assignment and the
+solution provided by an instructor; the intuition is that the higher the
+similarity is, the higher the grade should be.  Finally, the selection
+features are to quantify the accuracy of the selection of relevant parts in
+a case description based on how well the selected parts match the
+solutions.  While it is generally beneficial to manually design
+assignment-specific features, such features cannot be generalized to work
+on other assignments, in this paper, we focus on studying {\em general}
+features that can be {\em automatically computed} on any semi-structured
+complex assignments, and aim at understanding their effectiveness.
 
-A practical challenge in studying our problem is the lack of a large set of graded assignments
-which is needed both for training a machine learning program and for validating the results of 
-automated grading. This is partly due to the fact that grading such assignments takes much human
-effort, the very reason why we need to study automated grading for such assignments. In our experiments, 
-we used a data set of 107 student submissions for one medical case assessment
-assignment that are available to us. While the data set is small, we were able to 
-observe statistically significant differences in our experiments, thus it still allows us to 
-draw meaningful conclusions about different approaches to automated grading. 
+A practical challenge in studying our problem is the lack of a large set of
+graded assignments which is needed both for training a machine learning
+program and for validating the results of automated grading. This is partly
+due to the fact that grading such assignments takes much human effort, the
+very reason why we need to study automated grading for such assignments. In
+our experiments, we used a data set of 107 student submissions for one
+medical case assessment assignment that are available to us. While the data
+set is small, we were able to observe statistically significant differences
+in our experiments, thus it still allows us to draw meaningful conclusions
+about different approaches to automated grading.
 
-Our study with this data set shows that [{\bf FILL IN major conclusions, findings here; tie them to some of the questions we raised if possible}:
-(1) it is feasible to automate grading of such
-assignments using standard machine learning approaches and our proposed features provided the instructor can grade a small number of examples, but
-the grading accuracy
-on different rubric categories vary substantially.  (2) In general, the accuracy of automated grading
-highly depends on the effectiveness of features, thus careful feature engineering tailored towards specific grading
-criteria are critical for the feasibility of autograding.  (3) ..... (4) ..... ].
+Our study with this data set shows that [{\bf FILL IN major conclusions,
+ findings here; tie them to some of the questions we raised if possible}:
+ (1) it is feasible to automate grading of such assignments using standard
+ machine learning approaches and our proposed features provided the
+ instructor can grade a small number of examples, but the grading accuracy
+ on different rubric categories vary substantially.  (2) In general, the
+ accuracy of automated grading highly depends on the effectiveness of
+ features, thus careful feature engineering tailored towards specific
+ grading criteria are critical for the feasibility of autograding.  (3)
+..... (4) ..... ].
 
-As the first study of this new problem, our study is inevitably limited by the size of the data set; as the automated grading technology matures for such assignments, we anticipate to have much larger data sets available to further verify our observations and conclusions. 
-
-
+As the first study of this new problem, our study is inevitably limited by
+the size of the data set; as the automated grading technology matures for
+such assignments, we anticipate to have much larger data sets available to
+further verify our observations and conclusions.
