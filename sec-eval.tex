@@ -61,8 +61,8 @@ where $f(x_i)$ is the predicted label of the example $x_i$, $r(\cdot)$ is
 the rank of a given label, and $y_i$ is the gold standard label for the
 example $x_i$. This experiment is repeated for ten different randomized
 splits, and we report the average and standard deviation of the test set
-MAE in Table~\ref{table:train-set-size}. Note that due to the difference in the 
-test set, the results from different sizes of training sets are not strictly comparable. 
+MAE in Table~\ref{table:train-set-size}. Note that due to the difference in the
+test set, the results from different sizes of training sets are not strictly comparable.
 
 \input{table-train-set.tex}
 
@@ -177,6 +177,56 @@ effectively grade assignments. We suspect that significant gains in
 grading performance can be obtained in other dimensions through careful
 feature generation.
 
+\subsection{An Active Learning Approach}
+
+\begin{figure}
+  \begin{center}
+  \begin{tikzpicture}
+    \begin{axis}[xlabel={human-labeled pairs},ylabel={NDPM}, xmax=500,
+      legend style={font=\small}]
+
+      \addplot+[color=red, each nth point={10}, mark=triangle, error
+        bars/.cd, y dir=both, y explicit]
+          table [x=training-size, y=AVG-NDPM, y error=std-deviation, col
+          sep=comma] {data/random-learning.csv};
+
+      \addplot+[color=blue, each nth point={10}, mark=x, error bars/.cd, y
+        dir=both, y explicit]
+        table [x=training-size, y=AVG-NDPM, y error=std-deviation, col
+        sep=comma] {data/active-learning.csv};
+
+      \addplot[mark=none, color=green]
+        coordinates {(0, 0.344637) (500, 0.344637)};
+
+      \legend{Random learning, Active learning, BM25 similarity}
+    \end{axis}
+  \end{tikzpicture}
+  \caption{A comparison between a no-learning solution, a randomized
+  learning solution, and an active learning solution to the
+  grading-as-ranking problem. Reported is the average NDPM (lower is
+  better) over 5 runs, with error bars indicating one standard deviation.}
+  \label{fig:active-learning}
+  \end{center}
+\end{figure}
+
+Supervised learning, however, is not a particularly good fit for grading
+practices in reality for a number of reasons. First, as we observed in
+Tables~\ref{table:feature-comb}~and~\ref{table:feature-comb-clar}, outright
+prediction of an ordinal grade can be very challenging due to the highly
+concentrated nature of the dataset labels (see
+Table~\ref{table:grade-stats}). The vast majority of grade information
+available for the grade prediction task is centered around the mean,
+leaving very little information in the tails for a supervised learner to
+extract patterns from. (In some cases, for example, there are as few as one
+example for the highest and lowest ordinal grade values). The result is
+noisy output that may be inappropriate for using directly. However, it is
+worth noting that ordinal grade prediction is a hard problem, even for
+humans. There is also
+the issue that some subset of the assignments receive explicit instructor
+grading while the remaining receive only the attention of the
+machine---this discrepancy may not be fair to the students who do not get
+graded directly by the instructor.
+
 % no time for this?
 % \subsection{Active Learning Approach}
 
@@ -192,6 +242,6 @@ feature generation.
 %
 %** Feature selection to help avoid overfitting
 %
-%** Binary categorization: comparison of features; vary training set size? 
+%** Binary categorization: comparison of features; vary training set size?
 %
-%** Active learning: show that active learning is better for suggesting examples to grade. 
+%** Active learning: show that active learning is better for suggesting examples to grade.
