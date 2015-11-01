@@ -392,3 +392,88 @@ learning approach is able to achieve better NDPM than simply learning at
 random. This is consistent with our hypothesis that active learning as part
 of an automatic grading system can make more effective use of an
 instructor's time than a purely passive supervised approach.
+
+\begin{figure}
+  \begin{center}
+  \begin{tikzpicture}
+    \begin{axis}[xlabel={investigated assignments},ylabel={NDPM}, xmax=100,
+      legend style={font=\small}]
+
+      \addplot+[scatter, only marks, mark=x]
+        table [x=num-distinct, y=NDPM, col sep=comma]
+        {data/results-num-examined1.csv};
+
+      \addplot+[scatter, only marks, mark=triangle]
+        table [x=num-distinct, y=NDPM, col sep=comma]
+        {data/results-num-examined2.csv};
+
+      \addplot+[scatter, only marks, mark=diamond]
+        table [x=num-distinct, y=NDPM, col sep=comma]
+        {data/results-num-examined3.csv};
+
+      \addplot+[scatter, only marks, mark=circle]
+        table [x=num-distinct, y=NDPM, col sep=comma]
+        {data/results-num-examined4.csv};
+
+      \addplot+[scatter, only marks, mark=o]
+        table [x=num-distinct, y=NDPM, col sep=comma]
+        {data/results-num-examined5.csv};
+
+      \addplot[mark=none, color=green]
+        coordinates {(0, 0.344637) (100, 0.344637)};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{The number of unique assignments an instructor must see in order
+  to achieve a specific NDPM. Pictured are five different simulations, each
+  with a different seed set of $k_1 = 10$ pairs. The green line corresponds
+  to the same BM25 similarity baseline as in
+  Figure~\ref{fig:active-learning}.}
+  \label{fig:num-examined}
+  \end{center}
+\end{figure}
+
+%\begin{figure}
+%  \begin{center}
+%  \begin{tikzpicture}
+%    \begin{axis}[xlabel={human-labeled assignments},ylabel={NDPM}, xmax=50,
+%      legend style={font=\small}, cycle list name=color list]
+%
+%      \addplot+[color=red, mark=triangle,
+%          error bars/.cd, y dir=both, y explicit]
+%        table [x=num-graded, y=AVG-NDPM,
+%               y error=std-deviation,
+%               col sep=comma] {data/results-assign-random.csv};
+%
+%      \addplot+[color=blue, mark=x,
+%          error bars/.cd, y dir=both, y explicit]
+%        table [x=num-graded, y=AVG-NDPM,
+%          y error=std-deviation,
+%          col sep=comma] {data/results-assign-lc-single.csv};
+%
+%      \addplot+[color=orange, mark=square,
+%          %error bars/.cd, y dir=both, y explicit]
+%          ]
+%        table [x=num-graded, y=NDPM,
+%          %y error=std-deviation,
+%          col sep=comma] {data/results-assign-lc-total1.csv};
+%
+%      \addplot+[color=brown, mark=diamond,
+%          %error bars/.cd, y dir=both, y explicit]
+%          ]
+%        table [x=num-graded, y=NDPM,
+%          %y error=std-deviation,
+%          col sep=comma] {data/results-assign-lc-pair1.csv};
+%
+%      \addplot[mark=none, color=green]
+%        coordinates {(0, 0.344637) (500, 0.344637)};
+%
+%      \legend{Random learning, Active learning, BM25 similarity}
+%    \end{axis}
+%  \end{tikzpicture}
+%  \caption{A comparison between a no-learning solution, a randomized
+%  learning solution, and an active learning solution to the
+%  grading-as-ranking problem, using assignment grades as feedback instead
+%  of pairwise judgments.}
+%  \label{fig:assignment-based}
+%  \end{center}
+%\end{figure}
