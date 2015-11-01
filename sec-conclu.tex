@@ -1,19 +1,45 @@
 \section{Conclusions and Future Work}
 
 Automated grading of complex assignments is necessary for scaling up learning without compromising 
-effectiveness of learning. In this paper, we have experimentally shown the feasibility of using
-supervised learning techniques for automated grading of complex
-assignments (e.g., medical case assignments) under certain conditions.
-First, the instructor must be able to manually label a number of the
-assignments to serve as a training set from which to learn a predictive
-function. Second, care must be taken to craft features that can represent
-student submissions such that they can be separated from one another by
-the learning algorithm. If both of these assumptions are satisfied (as
-they are for our ``quality'' rubric dimension), an ordinal regression
+effectiveness of learning. Using a data set of medical case assessment assignments, 
+ we conducted the first systematic study of how we might be able to use machine learning to automate grading
+of such a complex assignment. Our study has led to several contributions. 
+
+First, we have experimentally shown the feasibility of using
+supervised learning techniques for automated grading of medical case assignments under certain conditions
+provided that the instructor can manually label a number of the
+assignments to serve as a training set. In particular,  an ordinal regression
 method can be applied to the data with results that consistently outperform
 the majority-label baseline in terms of mean absolute error.
 
-While the problem is not completely solved, this method shows promise. We
+Second, we proposed a general framework for the development of three complementary types of 
+representative
+features for student submissions (i.e., token features, similarity features, and selection features) ---while we applied these features to our
+specific task of medical case analysis grading, these feature types (and
+generation framework) are general and should apply to the grading of any
+complex assignment.
+
+Third, we proposed to frame the problem of automated grading as a ranking 
+problem, which can more naturally assist human graders to validate
+and finalize grades of ungraded assignments and learn from pairwise
+preference judgments that can be potentially created more reliably by human
+graders including through peer grading. We also suggested
+NDPM as potentially a better measure for this ranking task than other measures due to its superiority in handling many tied cases. 
+
+Finally, we proposed an iterative procedure of online active learning to rank to efficiently
+utilize human judgments, and thus optimizing the collaboration between human graders and
+  the automated grader. Experiment results confirm the efficiency of this procedure
+which can substantially save human effort as compared with randomly choosing
+sample assignments for humans to grade. 
+
+A major limitation of our study is the limited size of the data set. 
+This is partly due to the fact that such complex assignments currently can only be graded
+by human graders. In the future, we hope to deploy our automated grading tools
+to help scale up such courses to enable more students to participate, which in turn, would
+help collecting more data for experiments. 
+
+\ignore{
+ While the problem is not completely solved, this method shows promise. We
 believe that with more work, complex outline-based assignments such as the
 medical case assignments we study here can be autograded sufficiently well
 across many different rubric dimensions. We expect our findings to be
@@ -21,14 +47,7 @@ applied to the veterinary medicine class from which this data was obtained.
 The automation provided by our method will enable faster feedback to
 students than was previously possible, and we will continue to work on
 reducing the method's error rate on the other rubric dimensions.
-
-We also proposed a general framework for the development of three complementary types of 
-representative
-features for student submissions (i.e., token features, similarity features, and selection features) ---while we applied these features to our
-specific task of medical case analysis grading, these feature types (and
-generation framework) are general and should apply to the grading of any
-complex assignment.
-
+%
 Moving forward, we should consider new feature instantiations that follow
 (or extend upon) our feature generation framework in order to better
 capture the patterns we require for grading different dimensions such as
@@ -36,16 +55,14 @@ capture the patterns we require for grading different dimensions such as
 principle be extracted by taking a token-based view. Novel features not
 explored here could also extend to evaluating the quality of references
 within the assignment.
-
+%
 We also believe that an active learning approach should be effective for
 automating the training set selection of our method, which is currently a
 weakness of the proposed solution. We would like to address the
 effectiveness of an active learning-based automatic grading approach.
-Another limitation of our study is that the data set used for evaluation is small. 
-This is partly due to the fact that such complex assignments currently can only be graded
-by human graders. In the future, we hope to deploy our automated grading tools
-to help scale up such courses to enable more students to participate, which in turn, would
-help collecting more data for experiments. 
+Another limitation of our study is that the data set used for evaluation is small.}
+
+
 
 Another direction that remains unexplored is feedback: how could such a
 system give more detailed feedback to students beyond just their ordinal
