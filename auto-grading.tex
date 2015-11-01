@@ -32,7 +32,7 @@
 \def\plainauthor{First Author, Second Author, Third Author}
 \def\emptyauthor{}
 \def\plainkeywords{Automatic grading; ordinal regression; supervised
-learning; text mining}
+learning; active learning; text mining}
 
 % llt: Define a global style for URLs, rather that the default one
 \makeatletter
@@ -99,16 +99,21 @@ learning; text mining}
 
 \begin{abstract}
 Automated grading is essential for scaling up learning. In this paper, we
-conduct the first study of how to automate grading of a complex assignment
-using a medical case assessment as a test case. We propose to solve this problem
-using a supervised learning approach (ordinal regression), and propose a general
-methodology for designing three complementary types of feature representations of such complex
-assignments, including token features, similarity features, and selection features. 
-%  and propose the use of an ordinal regression approach using that
-Experiment results show that it is feasible to automate
-grading of such assignments provided that the instructor can grade a number of
-examples. However, careful feature engineering tailored towards specific
-grading criteria is critical for the feasibility of autograding. 
+conduct the first systematic study of how to automate grading of a complex
+assignment using a medical case assessment as a test case. We propose to
+solve this problem using a supervised learning approach and introduce three
+general complementary types of feature representations of such complex
+assignments for use in supervised learning.  We first show with empirical
+experiments that it is feasible to automate grading of such assignments
+provided that the instructor can grade a number of examples. We further
+study how to integrate an automated grader with human grading and propose
+to frame the problem as learning to rank assignments to exploit pairwise
+preference judgments and use NDPM as a measure for evaluation.  We then
+propose a sequential pairwise online active learning strategy to minimize
+the effort of human grading and optimize the collaboration of human graders
+and an automated grader.  Experiment results show that this strategy is
+indeed effective and can substantially human effort as compared with
+randomly sampling assignments for manual grading.
 \end{abstract}
 
 \keywords{\plainkeywords}
