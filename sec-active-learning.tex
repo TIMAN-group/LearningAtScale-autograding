@@ -132,43 +132,6 @@ active learning as part of an automatic grading system can make more
 effective use of an instructor's time than a purely passive supervised
 approach.
 
-\begin{figure}
-  \begin{center}
-  \begin{tikzpicture}
-    \begin{axis}[xlabel={investigated assignments},ylabel={NDPM}, xmax=100,
-      legend style={font=\small}]
-
-      \addplot+[scatter, only marks, mark=x]
-        table [x=num-distinct, y=NDPM, col sep=comma]
-        {data/results-num-examined1.csv};
-
-      \addplot+[scatter, only marks, mark=triangle]
-        table [x=num-distinct, y=NDPM, col sep=comma]
-        {data/results-num-examined2.csv};
-
-      \addplot+[scatter, only marks, mark=diamond]
-        table [x=num-distinct, y=NDPM, col sep=comma]
-        {data/results-num-examined3.csv};
-
-      \addplot+[scatter, only marks, mark=circle]
-        table [x=num-distinct, y=NDPM, col sep=comma]
-        {data/results-num-examined4.csv};
-
-      \addplot+[scatter, only marks, mark=o]
-        table [x=num-distinct, y=NDPM, col sep=comma]
-        {data/results-num-examined5.csv};
-
-%      \addplot[mark=none, color=green]
-%        coordinates {(0, 0.344637) (100, 0.344637)};
-    \end{axis}
-  \end{tikzpicture}
-  \caption{The number of unique assignments an instructor must see in order
-  to achieve a specific NDPM. Pictured are five different simulations, each
-  with a different seed set of $k_1 = 10$ pairs.}
-  \label{fig:num-examined}
-  \end{center}
-\end{figure}
-
 How much instructor effort goes in to judging 200 assignment pairs? This
 may initially seem like a lot, but each pair is not labeled in
 isolation---labeling many pairs will inevitably include assignments that
@@ -176,64 +139,9 @@ have already been seen before. These familiar assignments make providing a
 pairwise judgment faster than it would be if done ``cold''. In general, it
 is also reasonable to assume that the effort involved in simply saying
 whether assignment $a$ is better than assignment $b$ is lower than having
-to consult a rubric to assign an actual point (or letter) value.
-
-The amount of instructor effort spent on pairs is difficult to quantify in
-a simulation such as this one. To attempt to understand the effort
-expenditure to achieve a certain NDPM, we ran five randomized experiments
-using our pairwise learning to rank approach, but kept track at each
-iteration the number of unique assignments that appeared in assignment
-pairs presented to the instructor.  Figure~\ref{fig:num-examined}
-summarizes our results. In order to drive down the NDPM significantly, it
-is unfortunately the case that the instructor does see a large fraction of
-the assignment space. It is important, then, to ensure that providing a
-pairwise judgment takes as little effort as possible relative to assigning
-a numeric or letter grade.  An interesting future direction is then to
-design an interactive system that attempts to drive the cost of providing
-judgments down as much as possible.
-
-%\begin{figure}
-%  \begin{center}
-%  \begin{tikzpicture}
-%    \begin{axis}[xlabel={human-labeled assignments},ylabel={NDPM}, xmax=50,
-%      legend style={font=\small}, cycle list name=color list]
-%
-%      \addplot+[color=red, mark=triangle,
-%          error bars/.cd, y dir=both, y explicit]
-%        table [x=num-graded, y=AVG-NDPM,
-%               y error=std-deviation,
-%               col sep=comma] {data/results-assign-random.csv};
-%
-%      \addplot+[color=blue, mark=x,
-%          error bars/.cd, y dir=both, y explicit]
-%        table [x=num-graded, y=AVG-NDPM,
-%          y error=std-deviation,
-%          col sep=comma] {data/results-assign-lc-single.csv};
-%
-%      \addplot+[color=orange, mark=square,
-%          %error bars/.cd, y dir=both, y explicit]
-%          ]
-%        table [x=num-graded, y=NDPM,
-%          %y error=std-deviation,
-%          col sep=comma] {data/results-assign-lc-total1.csv};
-%
-%      \addplot+[color=brown, mark=diamond,
-%          %error bars/.cd, y dir=both, y explicit]
-%          ]
-%        table [x=num-graded, y=NDPM,
-%          %y error=std-deviation,
-%          col sep=comma] {data/results-assign-lc-pair1.csv};
-%
-%      \addplot[mark=none, color=green]
-%        coordinates {(0, 0.344637) (500, 0.344637)};
-%
-%      \legend{Random learning, Active learning, BM25 similarity}
-%    \end{axis}
-%  \end{tikzpicture}
-%  \caption{A comparison between a no-learning solution, a randomized
-%  learning solution, and an active learning solution to the
-%  grading-as-ranking problem, using assignment grades as feedback instead
-%  of pairwise judgments.}
-%  \label{fig:assignment-based}
-%  \end{center}
-%\end{figure}
+to consult a rubric to assign an actual point (or letter) value. It is
+important, however, to ensure that providing a pairwise judgment takes as
+little effort as possible relative to assigning a numeric or letter grade.
+An interesting future direction is then to design an interactive system
+that attempts to drive the cost of providing judgments down as much as
+possible.
