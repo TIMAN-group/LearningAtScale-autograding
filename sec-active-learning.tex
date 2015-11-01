@@ -1,4 +1,36 @@
 \section{Efficiently Utilizing Human Judgments with Active Learning}
+A serious drawback of the supervised learning approach is the lack
+of early feedback in the instructor--machine collaboration. In the
+supervised approach, a model is learned on some subset of the assignments
+to predict the grades of the remaining assignments, but the process of
+selecting a subset of assignments for grading is not guided. It is possible
+that randomly selecting assignments to grade results in mostly redundant
+information being given to the grading model. Instead, a better approach
+could be to employ active learning to allow the machine learning model to
+guide the instructor in providing the supervision to make the most
+effective use of his/her effort.
+
+Building on these observations, we propose the following ``pairwise active
+learning to rank'' model for automatic grading, which will employ the
+following process:
+
+\begin{enumerate}
+  \item Ask the instructor for comparative judgments on $k_1$ pairs of
+    assignments.
+
+  \item Learn a model using a learning-to-rank approach on the available
+    pairwise judgments.\label{al:learn-model-step}
+
+  \item Apply the model to all remaining unjudged pairs.
+
+  \item Select an unjudged pair to present to the instructor for
+    judgment.\label{al:select-training-step}
+
+  \item Go to step~\ref{al:learn-model-step}.
+\end{enumerate}
+Instantiations of this general approach will differ mainly in
+steps~\ref{al:learn-model-step}~and~\ref{al:select-training-step}.
+
 To study whether our proposed active learning approach better utilizes
 human judgments during the grading process, we performed the following
 experiment. We took our assignments and assigned each a ``composite
