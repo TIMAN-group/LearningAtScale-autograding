@@ -1,0 +1,175 @@
+\subsubsection{Efficiently Utilizing Human Judgments with Active Learning}
+To study whether our proposed active learning approach better utilizes
+human judgments during the grading process, we performed the following
+experiment. We took our assignments and assigned each a ``composite
+score'', computed as the average of their ordinal score for each of the six
+rubric dimensions. Our task is then to learn a ranking that is consistent
+with the ranking produced by these composite scores while simultaneously
+\emph{minimizing instructor effort} in providing the necessary supervision.
+
+We first transform the $n = 107$ assignments into $\frac{1}{2}n(n-1) =
+5671$ assignment \emph{pairs} $(x_i, x_j)$ with corresponding labels
+$y_{ij} \in \{+1, -1\}$ indicating whether $x_i$ should be ranked above or
+below $x_j$ in the ranking. Ties were broken arbitrarily by assignment id.
+The supervision given by the instructor is then to indicate a preference
+for ranking $x_i$ relative to $x_j$.
+
+Following the process laid out in the beginning of the section, we first
+start with $k_1 = 10$ random pairs selected from the transformed data and
+ask for labels from the instructor. We then learn the model, compute the
+NDPM for the ranking produced by the model for all $n$ assignments, and
+then ask for additional supervision by selecting the unlabeled assignment
+pair whose distance from the decision boundary for the model is lowest
+(this is a known, simple approach to uncertainty
+sampling~\cite{Settles:2012}) and repeat the training/evaluation loop. Our
+particular model choice was a linear SVM provided through the \textsc{MeTA}
+toolkit.
+
+We compare this active learning scenario with two different baselines. The
+first is a simple na\"ive approach that ranks all student assignments by
+their BM25 similarity with the instructor document as a query. Our other
+baseline is the exact same process as above, but instead of selecting the
+most uncertain pair in the unlabeled data we select one uniformly at
+random. This will allow us to see whether the uncertainty sampling approach
+is truly helping to guide the learning process to make more efficient
+supervision choices or not.
+
+\begin{figure}
+  \begin{center}
+  \begin{tikzpicture}
+    \begin{axis}[xlabel={human-labeled pairs},ylabel={NDPM}, xmax=500,
+      legend style={font=\small}]
+
+      \addplot+[color=red, each nth point={10}, filter discard
+          warning=false, mark=triangle, error bars/.cd, y dir=both, y explicit]
+        table [x=training-size, y=AVG-NDPM, y error=std-deviation, col
+            sep=comma] {data/random-learning.csv};
+
+      \addplot+[color=blue, each nth point={10}, filter discard
+          warning=false, mark=x, error bars/.cd, y dir=both, y explicit]
+        table [x=training-size, y=AVG-NDPM, y error=std-deviation, col
+          sep=comma] {data/active-learning.csv};
+
+      \addplot[mark=none, color=green]
+        coordinates {(0, 0.344637) (500, 0.344637)};
+
+      \legend{Random learning, Active learning, BM25 similarity}
+    \end{axis}
+  \end{tikzpicture}
+  \caption{A comparison between a no-learning solution, a randomized
+  learning solution, and an active learning solution to the
+  grading-as-ranking problem. Reported is the average NDPM (lower is
+  better) over 5 runs, with error bars indicating one standard deviation.}
+  \label{fig:active-learning}
+  \end{center}
+\end{figure}
+
+Our results are summarized in Figure~\ref{fig:active-learning}. We can
+immediately observe that the learning-based approaches significantly
+outperform the na\"ive text-similarity ranking baseline, which should be
+expected. More importantly is the difference between the active learning
+method (blue line) and the random learning method (red line). We can see
+that even at a small fraction of all of the assignment pairs, the active
+learning approach is able to achieve better NDPM than simply learning at
+random. This is consistent with our hypothesis that active learning as part
+of an automatic grading system can make more effective use of an
+instructor's time than a purely passive supervised approach.
+
+\begin{figure}
+  \begin{center}
+  \begin{tikzpicture}
+    \begin{axis}[xlabel={investigated assignments},ylabel={NDPM}, xmax=100,
+      legend style={font=\small}]
+
+      \addplot+[scatter, only marks, mark=x]
+        table [x=num-distinct, y=NDPM, col sep=comma]
+        {data/results-num-examined1.csv};
+
+      \addplot+[scatter, only marks, mark=triangle]
+        table [x=num-distinct, y=NDPM, col sep=comma]
+        {data/results-num-examined2.csv};
+
+      \addplot+[scatter, only marks, mark=diamond]
+        table [x=num-distinct, y=NDPM, col sep=comma]
+        {data/results-num-examined3.csv};
+
+      \addplot+[scatter, only marks, mark=circle]
+        table [x=num-distinct, y=NDPM, col sep=comma]
+        {data/results-num-examined4.csv};
+
+      \addplot+[scatter, only marks, mark=o]
+        table [x=num-distinct, y=NDPM, col sep=comma]
+        {data/results-num-examined5.csv};
+
+      \addplot[mark=none, color=green]
+        coordinates {(0, 0.344637) (100, 0.344637)};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{The number of unique assignments an instructor must see in order
+  to achieve a specific NDPM. Pictured are five different simulations, each
+  with a different seed set of $k_1 = 10$ pairs. The green line corresponds
+  to the same BM25 similarity baseline as in
+  Figure~\ref{fig:active-learning}.}
+  \label{fig:num-examined}
+  \end{center}
+\end{figure}
+
+How much instructor effort goes in to judging 200 assignment pairs? This is
+difficult to quantify in a simulation such as this one. To attempt to
+understand the effort expenditure to achieve a certain NDPM, we ran five
+randomized experiments using our pairwise learning to rank approach, but
+kept track at each iteration the number of unique assignments that appeared
+in assignment pairs presented to the instructor.
+Figure~\ref{fig:num-examined} summarizes our results. In order to drive
+down the NDPM significantly, it is unfortunately the case that the
+instructor does see a large fraction of the assignment space. It is
+important, then, to ensure that providing a pairwise judgment takes as
+little effort as possible relative to assigning a numeric or letter grade.
+An interesting future direction is then to design an interactive system that
+attempts to drive the cost of providing judgments down as much as possible.
+
+%\begin{figure}
+%  \begin{center}
+%  \begin{tikzpicture}
+%    \begin{axis}[xlabel={human-labeled assignments},ylabel={NDPM}, xmax=50,
+%      legend style={font=\small}, cycle list name=color list]
+%
+%      \addplot+[color=red, mark=triangle,
+%          error bars/.cd, y dir=both, y explicit]
+%        table [x=num-graded, y=AVG-NDPM,
+%               y error=std-deviation,
+%               col sep=comma] {data/results-assign-random.csv};
+%
+%      \addplot+[color=blue, mark=x,
+%          error bars/.cd, y dir=both, y explicit]
+%        table [x=num-graded, y=AVG-NDPM,
+%          y error=std-deviation,
+%          col sep=comma] {data/results-assign-lc-single.csv};
+%
+%      \addplot+[color=orange, mark=square,
+%          %error bars/.cd, y dir=both, y explicit]
+%          ]
+%        table [x=num-graded, y=NDPM,
+%          %y error=std-deviation,
+%          col sep=comma] {data/results-assign-lc-total1.csv};
+%
+%      \addplot+[color=brown, mark=diamond,
+%          %error bars/.cd, y dir=both, y explicit]
+%          ]
+%        table [x=num-graded, y=NDPM,
+%          %y error=std-deviation,
+%          col sep=comma] {data/results-assign-lc-pair1.csv};
+%
+%      \addplot[mark=none, color=green]
+%        coordinates {(0, 0.344637) (500, 0.344637)};
+%
+%      \legend{Random learning, Active learning, BM25 similarity}
+%    \end{axis}
+%  \end{tikzpicture}
+%  \caption{A comparison between a no-learning solution, a randomized
+%  learning solution, and an active learning solution to the
+%  grading-as-ranking problem, using assignment grades as feedback instead
+%  of pairwise judgments.}
+%  \label{fig:assignment-based}
+%  \end{center}
+%\end{figure}

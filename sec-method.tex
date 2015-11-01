@@ -1,9 +1,10 @@
-\section{Methods for Automated Grading}
+\section{Feasibility of Automated Gradiing}
 
-In this section, we first provide a general discussion of how we might be able to use machine learning methods for automating the grading of complex assignments, and then present a general methodology for designing three complementary types of features for representing assignments, which are needed for supervised learning. 
+In this section, we discuss and study the feasibility of using machine learning methods, particularly supervised learning,  for automating the grading of complex assignments. We first present the general idea of supervised learning, then propose a general methodology for designing three complementary types of features for representing assignments, which are needed for supervised learning, and finally present experiment results. 
 
+\ignore{
 \subsection{Unsupervised Learning}
-
+%
 Our first thought is to use unsupervised learning since it does not require any training data (i.e., graded assignments as examples).  In unsupervised learning, a model is built to describe some latent
 structure of the data without considering any label information. Typical
 examples of unsupervised methods include clustering and topic modeling.
@@ -16,7 +17,7 @@ somehow capture differences within the same group. This method was
 exploited to great effect by the power grading
 project~\cite{Brooks:2014:Powergrading} to allow instructors to spend
 significantly less time grading short answer questions.
-
+%
 However, this does not address the need to evaluate students along
 different dimensions as occurs in rubric grading for complex assignments.  Because the method does
 not consider the labels in learning the latent structure, the structure it
@@ -30,13 +31,16 @@ one correct answer, this is not a problem---but when we attempt to address
 more complex assignments that involve critical thinking and principled
 analysis (for which there are many ``correct'' answers) this becomes much
 more difficult and time consuming. 
+}
 
 \subsection{Supervised Learning}
 
-Supervised learning is more useful in the sense that such an approach can directly 
-assign a grade to an assignment though it requires some training data. In supervised learning, a model is built to predict the outcome (or label)
-of a new example based on previous examples it has seen before (called the
-training data). A critical component of this infrastructure is the
+In supervised learning, a model is built to predict the outcome (or label)
+of a new data example based on previous examples it has seen before (called the
+training data). Thus a natural way to use supervised learning for grading 
+is to have a human (e.g., instructor) to grade a set of assignments to be used
+as training data to learn a model to predict the grade of each ungraded
+assignment. A critical component of this infrastructure is the
 decomposition of examples into feature vectors---this decomposition enables
 the use of algorithms for learning functions from these vectors to the
 output labels desired. Typically, these feature vectors are either binary
@@ -44,19 +48,26 @@ or real-valued, and are often (but not always) in a high-dimensional space.
 The performance of the learned function is directly tied to the features
 used in the vector representation of the examples---poor features result
 in low predictive capability due to the algorithm being unable to find
-meaningful patterns in the examples. As such, these features are the most
+meaningful patterns in the examples. As such, these features are a 
 critical component of any supervised learning approach. With a properly
 defined set of features that are capable of capturing the salient patterns
 in the training examples, the task can be given to any of a number of
 state-of-the-art algorithms for learning appropriate predictive functions
-that can be applied to yet-unseen data (the test data).
+that can be applied to yet-unseen data (the test data). Another factor
+affecting the accuracy of prediction is the number of training examples, with 
+more training examples leading to higher accuracy. However, since 
+creating training examples generally requires manual work, we tend
+to have only a limited number of training examples to work with. 
+How to define general features that we can automatically compute 
+based on a complex assignment and how to minimize manual effort
+in creating training examples are two major questions that we study in this paper. 
 
-This scenario is applicable to an automated grading setup in which the
+\ignore{This scenario is applicable to an automated grading setup in which the
 instructor labels a certain number of student assignments with a grade
 which are then fed in to the algorithm to learn a predictive function that,
 when applied to the unlabeled examples, provides a grade based on the
 patterns extracted from the manually graded examples.
-
+%
 This supervised framework would allow instructors to learn a separate
 predictor for each dimension in a rubric by simply changing the labels of
 the training examples to reflect a different rubric dimension during
@@ -64,7 +75,7 @@ training. We will explore supervised learning approaches in this paper to
 address our need for predicting different rubric dimensions instead of a
 single overall grade. In such a setting, the grading problem has been
 reduced to defining a set of features that characterize a student's
-assignment along multiple dimensions.
+assignment along multiple dimensions.}
 
 \subsubsection{Defining Features of a Student Assignment}
 
@@ -101,7 +112,9 @@ create a high-dimensional representation of the student submission, and are
 motivated by an attempt to capture the difference in vocabulary between
 assignments. This is often enough to capture whether the correct ideas are
 mentioned without requiring extensive computation (features from this class
-are trivial to compute for every student submission). Document
+are trivial to compute for every student submission), though more discriminative
+units such as n-grams (a sequence of $n$ words) may also be easily used
+to replace single words if necessary.  Document
 classification techniques typically operate in this kind of space.
 
 The second class of features, which we call \textbf{similarity features},
@@ -136,6 +149,8 @@ fraction of the bullets selected by the student also appear in the gold
 standard?)\ and recall (what fraction of bullets selected in the gold
 standard were also selected by the student?).
 
+
+\ignore{
 \subsection{Active Learning}
 One critical problem in the supervised learning setting is the selection
 of a training set. If a non-representative training set is selected, the
@@ -143,7 +158,7 @@ algorithm has no opportunity to learn the features that distinguish the
 excellent submissions from the ordinary submissions. Unfortunately, the
 traditional supervised learning setting offers no principled mechanism for
 picking which training set to use---it just assumes one exists a priori.
-
+%
 Active learning methods~\cite{Settles:2012} bridge this gap by providing a
 mechanism for selecting relevant training examples designed to maximally
 improve the performance of an existing model. This setting is very relevant
@@ -156,9 +171,9 @@ second batch, which is used to incrementally improve the learned model.
 This should, in principle, reduce the amount of time an instructor would
 have to spend grading to obtain a certain performance threshold for the
 grade predictor.
-
+%
 \subsection{Combined Methods for Complete Grading Support}
-
+%
 A comprehensive system can then be designed that leverages all three of
 these perspectives: unsupervised, (semi-) supervised, and active learning.
 We can first apply an unsupervised learning technique to group the student
@@ -174,3 +189,179 @@ criteria is met, or a certain number of submissions have been labeled.
 Such a combined method would attempt to {\bf optimize the collaboration of
 human graders and the automated grading tool}  so that we can leverage the
 best of each.
+}
+
+\subsubsection{Ordinal Regression for Grade Prediction}
+
+Because of the ordinal nature of our grade labels (categorical with an
+implicit ranking), it is natural to apply ordinal regression techniques to
+our automated grading setup. In particular, we will utilize support vector
+ordinal regression (SVOR)~\cite{Chu:2007:SVOR}, a generalization of the
+popular support vector machine (SVM)~\cite{Cortes:1995:SVM} for
+classification to the case of ordinal labels in the study of feasibility of
+grade prediction. 
+
+\subsection{Experiment Results} 
+
+\ignore{
+In this section, we perform some experiments that focus specifically on the
+(semi-) supervised methods detailed in the previous section, which we view
+as the starting point towards a more comprehensive method for grading
+complex assignments. We detail our empirical findings on an example
+dataset of $n=107$ student submissions to evaluate our proposed methods.
+}
+
+We now present the results of ordinal regression on our medical assignment 
+data set to assess the effectiveness of the proposed 
+features and examine how effective such a state of the art learning method is for
+solving the grading problem.  
+
+\subsubsection{Sensitivity to Training Size}
+We first explored using only the most general of our feature types---token
+features---to attempt to understand the sensitivity of the method to the
+amount of student submissions labeled. Frequency-based token features were
+extracted: we used the \textsc{MeTA}
+toolkit\footnote{\url{https://meta-toolkit.org}} at version 1.1
+with its default tokenizer, stemmer, and stopword list. For regression, we
+used a modified version of
+\textsc{LIBSVM}\footnote{\url{http://www.work.caltech.edu/~htlin/program/libsvm/}}
+adapted to ordinal regression~\cite{Li:2007:NIPS}.
+
+In an actual grading scenario, the instructor would manually grade a
+certain number of the submissions, learn the regression function from these
+labeled examples, and then apply the learned model to the remaining
+unlabeled examples. To simulate this, we ran the following experiments: for
+each rubric dimension, we took the collection of student documents and
+randomly split it into two groups (the training and test sets) of specific
+sizes, slowly increasing the size of the training set (and thus decreasing
+the size of the test set). A function is learned based on the labeled
+training set which is then used to label the examples in the test set. We
+compute the \textbf{mean absolute error} (MAE), defined as
+\[
+MAE = \frac{1}{n} \sum_{i=1}^n | r(f(x_i)) - r(y_i) |
+\]
+where $f(x_i)$ is the predicted label of the example $x_i$, $r(\cdot)$ is
+the rank of a given label, and $y_i$ is the gold standard label for the
+example $x_i$. This experiment is repeated for ten different randomized
+splits, and we report the average and standard deviation of the test set
+MAE in Table~\ref{table:train-set-size}. Note that due to the difference in the
+test set, the results from different sizes of training sets are not strictly
+comparable.
+
+\input{table-train-set.tex}
+
+There are a few things that we can observe from these results.  Perhaps
+unsurprisingly, the rubric labels with the least variation are the easiest
+to predict (e.g., ``application'' and ``questions'')---these dimensions
+seem to benefit the least from the inclusion of more training examples.
+The more difficult dimensions with higher data variance (e.g.,
+``quality'') benefit more strongly from the inclusion of more training
+data---more examples allow the method to better capture the
+\emph{generalizable} patterns that apply to unseen examples.
+
+\ignore{
+\subsubsection{Overfitting}
+A concern with complicated models such as SVMs, especially when applied to
+small datasets with high dimensionality, is that of overfitting: the
+training data is essentially memorized, causing the output function to
+fail to perform well on new examples due to its failure to capture
+patterns that generalize~\cite{Dietterich:1995:ACMCS}. Feature selection is
+a method that can combat this in which only a subset of the possible
+features in a given type are used~\cite{Guyon:2003:JMLR}. In our setup, we had
+2646 total token features, which we attempted to reduce by only considering
+tokens that had a total collection frequency above a certain threshold $k \in
+\{10, 20, 100, 200\}$ resulting in 558, 383, 144, and 61 features,
+respectively.  Unfortunately, this selection method failed to reduce the
+overfitting phenomena, likely due to data sparsity. It would be worth exploring
+more principled feature selection in future work, as this should in principle
+improve the model's generalization.}
+
+\subsubsection{The Impact of Different Feature Types}
+Moving beyond simple token features, we extracted both similarity and
+selection features from our assignments and incorporated them
+incrementally into our model to measure the predictive capacity of
+different feature types.
+
+Our token features were generated using the same process detailed
+previously (frequency-based features extracted using the \textsc{MeTA}
+toolkit).
+
+Our similarity features (compared against an instructor-generated
+assignment submission) were overall similarity, similarity of only
+observation bullets, and similarity of only analysis bullets---these were
+computed using the Okapi BM25 similarity function often used in information
+retrieval as a scoring function~\cite{Robertson:1994:SIGIR,
+Robertson:1996:TREC-3}. The instructor submission was treated as a query
+and the student submissions as documents to be scored by utilizing the
+following function:
+\begin{align*}
+    score(Q, D) &= \sum_{w \in Q \cup D} QTF(w, Q) \cdot TF(w, D) \cdot
+IDF(w)\\
+\intertext{where}
+    QTF(w, Q) &= \frac{(k_3 + 1)c(w, Q)}{k_3 + c(w, Q)},\\
+    TF(w, D) &= \frac{(k_1 + 1)c(w,D)}{k_1 + ((1-b) + b \cdot
+\frac{|D|}{avdl}) + c(w,D)},\\
+    IDF(w) &= \frac{N - df(w) + 0.5}{df(w) + 0.5},
+\end{align*}
+
+and $c(w, Q)$ is the frequency of the word $w$ in the query, $c(w, D)$ is
+the frequency of the word $w$ in the document to be scored, $|D|$ is the
+length of the document, $avdl$ is the average document length, $N$ is the
+total number of documents, and $df(w)$ is the number of documents in which
+the term $w$ appears. $k_1 = 1.2$, $k_3 = 500$, and $b = 0.75$ are
+parameters which were set to heuristic defaults. This function has been
+shown to be very robust, capturing a large number of important information
+retrieval heuristics~\cite{Fang:2005:Axiomatic}, motivating our choice.
+
+Our selection features were precision and recall of the
+selected lab data in the student case analysis when compared against the
+instructor's assignment.
+
+We investigate the predictive capacity of these features by exploring the
+improvement of the model when predicting our most challenging labels
+(``quality'' and ``clarity''). We ran ten separate experiments with
+different randomized training sets consisting of 50\% of the data when
+using different feature combinations to represent the student submissions.
+We again report the average and standard deviation of the MAE on the test
+set across the ten runs. To further explore whether the regression method
+is truly capturing patterns relevant for grading, we compare its MAE
+against the MAE obtained by using a na\"ive baseline: compute the most
+frequent label in the training data, and then assign this label to all
+examples in the test set.  Intuitively, this is a very reasonable baseline
+when comparing MAE---if the labels are normally distributed, picking the
+most frequent one will ensure an absolute error of zero for the majority of
+the examples---while simultaneously being unhelpful for discriminative
+grading (which the regression method hopes to capture). Our results are
+summarized in
+Tables~\ref{table:feature-comb}~and~\ref{table:feature-comb-clar}.
+
+\input{table-feature-comb.tex}
+
+We see that for the ``quality'' dimension, the model is able to
+successfully learn generalizable patterns in our features to predict the
+label with errors that are statistically significantly less than the
+baseline method. In general, the token features dominate the performance,
+but it would seem as though the similarity and selection features have
+lower variability in the MAE. Again, this result suggests that there are
+likely gains to be had by utilizing a more sophisticated feature selection
+method to remove some of the noise introduced by extraneous token features.
+
+However, the ``clarity'' label shows us that the problem is far from being
+solved in a general sense. Here, we see that our method consistently fails
+to beat the baseline method, with the winning method being seemingly
+random. This indicates that the features we have selected thus far are more
+tailored toward discrimination along certain dimensions of the grading
+rubric than others. More work must be placed into developing features that
+truly capture the ``clarity'' dimension to allow the model to extract the
+patterns the instructor observes when grading along this dimension.
+
+What this demonstrates is that automatic grading of complex assignments is
+currently feasible, but perhaps only in a limited fashion. Careful feature
+generation is required, but in some cases a model can be learned to
+effectively grade assignments. We suspect that significant gains in
+grading performance can be obtained in other dimensions through careful
+feature generation.
+
+
+
+

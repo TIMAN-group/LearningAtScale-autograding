@@ -1,169 +1,16 @@
-\section{Experiments}
 
-In this section, we perform some experiments that focus specifically on the
-(semi-) supervised methods detailed in the previous section, which we view
-as the starting point towards a more comprehensive method for grading
-complex assignments. We detail our empirical findings on an example
-dataset of $n=107$ student submissions to evaluate our proposed methods.
+\section{Automated Grading as Ranking Assignments}
 
-\subsection{Ordinal Regression Feasibility Study}
+\subsection{Motivation}
 
-Because of the ordinal nature of our grade labels (categorical with an
-implicit ranking), it is natural to apply ordinal regression techniques to
-our automated grading setup. These methods fall into the category of
-supervised learning. In particular, we will utilize support vector
-ordinal regression (SVOR)~\cite{Chu:2007:SVOR}, a generalization of the
-popular support vector machine (SVM)~\cite{Cortes:1995:SVM} for
-classification to the case of ordinal labels.
+Some of the results from our feasibility study using ordinal regression raise
+ the question whether framing the problem of automated grading as
+ordinal regression is appropriate. Indeed, as we will discuss, it appears
+to be more advantageous to frame the problem as one of ranking
+the ungraded assignments, which a human grader can segment  into
+any desired grade levels. 
 
-\subsubsection{Sensitivity to Training Size}
-We first explored using only the most general of our feature types---token
-features---to attempt to understand the sensitivity of the method to the
-amount of student submissions labeled. Frequency-based token features were
-extracted: we used the \textsc{MeTA}
-toolkit\footnote{\url{https://meta-toolkit.org}} at version 1.1
-with its default tokenizer, stemmer, and stopword list. For regression, we
-used a modified version of
-\textsc{LIBSVM}\footnote{\url{http://www.work.caltech.edu/~htlin/program/libsvm/}}
-adapted to ordinal regression~\cite{Li:2007:NIPS}.
-
-In an actual grading scenario, the instructor would manually grade a
-certain number of the submissions, learn the regression function from these
-labeled examples, and then apply the learned model to the remaining
-unlabeled examples. To simulate this, we ran the following experiments: for
-each rubric dimension, we took the collection of student documents and
-randomly split it into two groups (the training and test sets) of specific
-sizes, slowly increasing the size of the training set (and thus decreasing
-the size of the test set). A function is learned based on the labeled
-training set which is then used to label the examples in the test set. We
-compute the \textbf{mean absolute error} (MAE), defined as
-\[
-MAE = \frac{1}{n} \sum_{i=1}^n | r(f(x_i)) - r(y_i) |
-\]
-where $f(x_i)$ is the predicted label of the example $x_i$, $r(\cdot)$ is
-the rank of a given label, and $y_i$ is the gold standard label for the
-example $x_i$. This experiment is repeated for ten different randomized
-splits, and we report the average and standard deviation of the test set
-MAE in Table~\ref{table:train-set-size}. Note that due to the difference in the
-test set, the results from different sizes of training sets are not strictly
-comparable.
-
-\input{table-train-set.tex}
-
-There are a few things that we can observe from these results.  Perhaps
-unsurprisingly, the rubric labels with the least variation are the easiest
-to predict (e.g., ``application'' and ``questions'')---these dimensions
-seem to benefit the least from the inclusion of more training examples.
-The more difficult dimensions with higher data variance (e.g.,
-``quality'') benefit more strongly from the inclusion of more training
-data---more examples allow the method to better capture the
-\emph{generalizable} patterns that apply to unseen examples.
-
-\subsubsection{Overfitting}
-A concern with complicated models such as SVMs, especially when applied to
-small datasets with high dimensionality, is that of overfitting: the
-training data is essentially memorized, causing the output function to
-fail to perform well on new examples due to its failure to capture
-patterns that generalize~\cite{Dietterich:1995:ACMCS}. Feature selection is
-a method that can combat this in which only a subset of the possible
-features in a given type are used~\cite{Guyon:2003:JMLR}. In our setup, we had
-2646 total token features, which we attempted to reduce by only considering
-tokens that had a total collection frequency above a certain threshold $k \in
-\{10, 20, 100, 200\}$ resulting in 558, 383, 144, and 61 features,
-respectively.  Unfortunately, this selection method failed to reduce the
-overfitting phenomena, likely due to data sparsity. It would be worth exploring
-more principled feature selection in future work, as this should in principle
-improve the model's generalization.
-
-\subsubsection{The Impact of Different Feature Types}
-Moving beyond simple token features, we extracted both similarity and
-selection features from our assignments and incorporated them
-incrementally into our model to measure the predictive capacity of
-different feature types.
-
-Our token features were generated using the same process detailed
-previously (frequency-based features extracted using the \textsc{MeTA}
-toolkit).
-
-Our similarity features (compared against an instructor-generated
-assignment submission) were overall similarity, similarity of only
-observation bullets, and similarity of only analysis bullets---these were
-computed using the Okapi BM25 similarity function often used in information
-retrieval as a scoring function~\cite{Robertson:1994:SIGIR,
-Robertson:1996:TREC-3}. The instructor submission was treated as a query
-and the student submissions as documents to be scored by utilizing the
-following function:
-\begin{align*}
-    score(Q, D) &= \sum_{w \in Q \cup D} QTF(w, Q) \cdot TF(w, D) \cdot
-IDF(w)\\
-\intertext{where}
-    QTF(w, Q) &= \frac{(k_3 + 1)c(w, Q)}{k_3 + c(w, Q)},\\
-    TF(w, D) &= \frac{(k_1 + 1)c(w,D)}{k_1 + ((1-b) + b \cdot
-\frac{|D|}{avdl}) + c(w,D)},\\
-    IDF(w) &= \frac{N - df(w) + 0.5}{df(w) + 0.5},
-\end{align*}
-
-and $c(w, Q)$ is the frequency of the word $w$ in the query, $c(w, D)$ is
-the frequency of the word $w$ in the document to be scored, $|D|$ is the
-length of the document, $avdl$ is the average document length, $N$ is the
-total number of documents, and $df(w)$ is the number of documents in which
-the term $w$ appears. $k_1 = 1.2$, $k_3 = 500$, and $b = 0.75$ are
-parameters which were set to heuristic defaults. This function has been
-shown to be very robust, capturing a large number of important information
-retrieval heuristics~\cite{Fang:2005:Axiomatic}, motivating our choice.
-
-Our selection features were precision and recall of the
-selected lab data in the student case analysis when compared against the
-instructor's assignment.
-
-We investigate the predictive capacity of these features by exploring the
-improvement of the model when predicting our most challenging labels
-(``quality'' and ``clarity''). We ran ten separate experiments with
-different randomized training sets consisting of 50\% of the data when
-using different feature combinations to represent the student submissions.
-We again report the average and standard deviation of the MAE on the test
-set across the ten runs. To further explore whether the regression method
-is truly capturing patterns relevant for grading, we compare its MAE
-against the MAE obtained by using a na\"ive baseline: compute the most
-frequent label in the training data, and then assign this label to all
-examples in the test set.  Intuitively, this is a very reasonable baseline
-when comparing MAE---if the labels are normally distributed, picking the
-most frequent one will ensure an absolute error of zero for the majority of
-the examples---while simultaneously being unhelpful for discriminative
-grading (which the regression method hopes to capture). Our results are
-summarized in
-Tables~\ref{table:feature-comb}~and~\ref{table:feature-comb-clar}.
-
-\input{table-feature-comb.tex}
-
-We see that for the ``quality'' dimension, the model is able to
-successfully learn generalizable patterns in our features to predict the
-label with errors that are statistically significantly less than the
-baseline method. In general, the token features dominate the performance,
-but it would seem as though the similarity and selection features have
-lower variability in the MAE. Again, this result suggests that there are
-likely gains to be had by utilizing a more sophisticated feature selection
-method to remove some of the noise introduced by extraneous token features.
-
-However, the ``clarity'' label shows us that the problem is far from being
-solved in a general sense. Here, we see that our method consistently fails
-to beat the baseline method, with the winning method being seemingly
-random. This indicates that the features we have selected thus far are more
-tailored toward discrimination along certain dimensions of the grading
-rubric than others. More work must be placed into developing features that
-truly capture the ``clarity'' dimension to allow the model to extract the
-patterns the instructor observes when grading along this dimension.
-
-What this demonstrates is that automatic grading of complex assignments is
-currently feasible, but perhaps only in a limited fashion. Careful feature
-generation is required, but in some cases a model can be learned to
-effectively grade assignments. We suspect that significant gains in
-grading performance can be obtained in other dimensions through careful
-feature generation.
-
-\subsection{An Active Learning to Rank Approach}
-Supervised learning, however, is not a particularly good fit for grading
-practices in reality for a number of reasons. First, as we observed in
+Specifically, as we observed in
 Tables~\ref{table:feature-comb}~and~\ref{table:feature-comb-clar}, outright
 prediction of an ordinal grade can be very challenging due to the highly
 concentrated nature of the dataset labels (see
@@ -180,7 +27,7 @@ becomes larger as assignments become more complex and difficult to grade,
 which makes the task of outright label prediction much more difficult for
 the machine as well.
 
-Perhaps a more reasonable approach, then, is to produce a ranked list of
+Thus  an alternative, and more reasonable approach may be to produce a ranked list of
 assignments from best to worst. Annotators are typically more consistent at
 providing judgments of the form ``is $a$ better than $b$?''\ than ``on a
 scale from 1--5, how good is $a$?''~\cite{Callison-Burch:2007:WMT}, so it
@@ -191,43 +38,16 @@ a good ranking of assignments, an instructor simply needs to assign
 learning problem from attempting to predict an ordinal label for a specific
 assignment to assigning a ranking to a set of assignments. This is a well
 studied area in information retrieval called ``learning to
-rank''~\cite{Joachims:2002:KDD}, and there are a wide variety of methods
+rank''~\cite{Joachims:2002:KDD, Liu:2009}, and there are a wide variety of methods
 available that one can use to learn a ranking function for documents given
-a set of available features.
+a set of available features.  
 
-Second, a serious drawback of the supervised learning approach is the lack
-of early feedback in the instructor--machine collaboration. In the
-supervised approach, a model is learned on some subset of the assignments
-to predict the grades of the remaining assignments, but the process of
-selecting a subset of assignments for grading is not guided. It is possible
-that randomly selecting assignments to grade results in mostly redundant
-information being given to the grading model. Instead, a better approach
-could be to employ active learning to allow the machine learning model to
-guide the instructor in providing the supervision to make the most
-effective use of his/her effort.
-
-Building on these two observations, we propose the following ``pairwise
-active learning to rank'' model for automatic grading, which will employ
-the following process:
-\begin{enumerate}
-  \item Ask the instructor for comparative judgments on $k_1$ pairs of
-    assignments.
-  \item Learn a model using a learning-to-rank approach on the available
-    pairwise judgments.\label{al:learn-model-step}
-  \item Apply the model to all remaining unjudged pairs.
-  \item Select an unjudged pair to present to the instructor for judgment.
-    \label{al:select-training-step}
-  \item Go to step~\ref{al:learn-model-step}.
-\end{enumerate}
-Instantiations of this general approach will differ mainly in
-steps~\ref{al:learn-model-step}~and~\ref{al:select-training-step}.
-
-Before we explore the efficacy of such an approach, however, we must first
+One particular method that we will explore is ......  Before we explore the efficacy of such an approach, however, we must first
 redefine some measure by which we can measure performance. Because the
 system is no longer predicting a rating for each assignment, we cannot use
 MAE as before.
 
-\subsubsection{Evaluating Ranking-based Grading Systems}
+\subsection{Evaluating Ranking-based Grading Systems}
 Our goal is to produce a ranking of student assignments that is consistent
 with instructor evaluation. One way of framing this problem is to compare
 the ranking produced by the system to the ranking produced by the
@@ -298,164 +118,4 @@ rankings above, we achieve this result. Thus, we feel that NDPM is perhaps
 the most appropriate measure for evaluating automatic grading systems that
 produce an ordering of assignments as their output.
 
-\subsubsection{Efficiently Utilizing Human Judgments with Active Learning}
-To study whether our proposed active learning approach better utilizes
-human judgments during the grading process, we performed the following
-experiment. We took our assignments and assigned each a ``composite
-score'', computed as the average of their ordinal score for each of the six
-rubric dimensions. Our task is then to learn a ranking that is consistent
-with the ranking produced by these composite scores while simultaneously
-\emph{minimizing instructor effort} in providing the necessary supervision.
-
-We first transform the $n = 107$ assignments into $\frac{1}{2}n(n-1) =
-5671$ assignment \emph{pairs} $(x_i, x_j)$ with corresponding labels
-$y_{ij} \in \{+1, -1\}$ indicating whether $x_i$ should be ranked above or
-below $x_j$ in the ranking. Ties were broken arbitrarily by assignment id.
-The supervision given by the instructor is then to indicate a preference
-for ranking $x_i$ relative to $x_j$.
-
-Following the process laid out in the beginning of the section, we first
-start with $k_1 = 10$ random pairs selected from the transformed data and
-ask for labels from the instructor. We then learn the model, compute the
-NDPM for the ranking produced by the model for all $n$ assignments, and
-then ask for additional supervision by selecting the unlabeled assignment
-pair whose distance from the decision boundary for the model is lowest
-(this is a known, simple approach to uncertainty
-sampling~\cite{Settles:2012}) and repeat the training/evaluation loop. Our
-particular model choice was a linear SVM provided through the \textsc{MeTA}
-toolkit.
-
-We compare this active learning scenario with two different baselines. The
-first is a simple na\"ive approach that ranks all student assignments by
-their BM25 similarity with the instructor document as a query. Our other
-baseline is the exact same process as above, but instead of selecting the
-most uncertain pair in the unlabeled data we select one uniformly at
-random. This will allow us to see whether the uncertainty sampling approach
-is truly helping to guide the learning process to make more efficient
-supervision choices or not.
-
-\begin{figure}
-  \begin{center}
-  \begin{tikzpicture}
-    \begin{axis}[xlabel={human-labeled pairs},ylabel={NDPM}, xmax=500,
-      legend style={font=\small}]
-
-      \addplot+[color=red, each nth point={10}, filter discard
-          warning=false, mark=triangle, error bars/.cd, y dir=both, y explicit]
-        table [x=training-size, y=AVG-NDPM, y error=std-deviation, col
-            sep=comma] {data/random-learning.csv};
-
-      \addplot+[color=blue, each nth point={10}, filter discard
-          warning=false, mark=x, error bars/.cd, y dir=both, y explicit]
-        table [x=training-size, y=AVG-NDPM, y error=std-deviation, col
-          sep=comma] {data/active-learning.csv};
-
-      \addplot[mark=none, color=green]
-        coordinates {(0, 0.344637) (500, 0.344637)};
-
-      \legend{Random learning, Active learning, BM25 similarity}
-    \end{axis}
-  \end{tikzpicture}
-  \caption{A comparison between a no-learning solution, a randomized
-  learning solution, and an active learning solution to the
-  grading-as-ranking problem. Reported is the average NDPM (lower is
-  better) over 5 runs, with error bars indicating one standard deviation.}
-  \label{fig:active-learning}
-  \end{center}
-\end{figure}
-
-Our results are summarized in Figure~\ref{fig:active-learning}. We can
-immediately observe that the learning-based approaches significantly
-outperform the na\"ive text-similarity ranking baseline, which should be
-expected. More importantly is the difference between the active learning
-method (blue line) and the random learning method (red line). We can see
-that even at a small fraction of all of the assignment pairs, the active
-learning approach is able to achieve better NDPM than simply learning at
-random. This is consistent with our hypothesis that active learning as part
-of an automatic grading system can make more effective use of an
-instructor's time than a purely passive supervised approach.
-
-\begin{figure}
-  \begin{center}
-  \begin{tikzpicture}
-    \begin{axis}[xlabel={investigated assignments},ylabel={NDPM}, xmax=100,
-      legend style={font=\small}]
-
-      \addplot+[scatter, only marks, mark=x]
-        table [x=num-distinct, y=NDPM, col sep=comma]
-        {data/results-num-examined1.csv};
-
-      \addplot+[scatter, only marks, mark=triangle]
-        table [x=num-distinct, y=NDPM, col sep=comma]
-        {data/results-num-examined2.csv};
-
-      \addplot+[scatter, only marks, mark=diamond]
-        table [x=num-distinct, y=NDPM, col sep=comma]
-        {data/results-num-examined3.csv};
-
-      \addplot+[scatter, only marks, mark=circle]
-        table [x=num-distinct, y=NDPM, col sep=comma]
-        {data/results-num-examined4.csv};
-
-      \addplot+[scatter, only marks, mark=o]
-        table [x=num-distinct, y=NDPM, col sep=comma]
-        {data/results-num-examined5.csv};
-
-      \addplot[mark=none, color=green]
-        coordinates {(0, 0.344637) (100, 0.344637)};
-    \end{axis}
-  \end{tikzpicture}
-  \caption{The number of unique assignments an instructor must see in order
-  to achieve a specific NDPM. Pictured are five different simulations, each
-  with a different seed set of $k_1 = 10$ pairs. The green line corresponds
-  to the same BM25 similarity baseline as in
-  Figure~\ref{fig:active-learning}.}
-  \label{fig:num-examined}
-  \end{center}
-\end{figure}
-
-%\begin{figure}
-%  \begin{center}
-%  \begin{tikzpicture}
-%    \begin{axis}[xlabel={human-labeled assignments},ylabel={NDPM}, xmax=50,
-%      legend style={font=\small}, cycle list name=color list]
-%
-%      \addplot+[color=red, mark=triangle,
-%          error bars/.cd, y dir=both, y explicit]
-%        table [x=num-graded, y=AVG-NDPM,
-%               y error=std-deviation,
-%               col sep=comma] {data/results-assign-random.csv};
-%
-%      \addplot+[color=blue, mark=x,
-%          error bars/.cd, y dir=both, y explicit]
-%        table [x=num-graded, y=AVG-NDPM,
-%          y error=std-deviation,
-%          col sep=comma] {data/results-assign-lc-single.csv};
-%
-%      \addplot+[color=orange, mark=square,
-%          %error bars/.cd, y dir=both, y explicit]
-%          ]
-%        table [x=num-graded, y=NDPM,
-%          %y error=std-deviation,
-%          col sep=comma] {data/results-assign-lc-total1.csv};
-%
-%      \addplot+[color=brown, mark=diamond,
-%          %error bars/.cd, y dir=both, y explicit]
-%          ]
-%        table [x=num-graded, y=NDPM,
-%          %y error=std-deviation,
-%          col sep=comma] {data/results-assign-lc-pair1.csv};
-%
-%      \addplot[mark=none, color=green]
-%        coordinates {(0, 0.344637) (500, 0.344637)};
-%
-%      \legend{Random learning, Active learning, BM25 similarity}
-%    \end{axis}
-%  \end{tikzpicture}
-%  \caption{A comparison between a no-learning solution, a randomized
-%  learning solution, and an active learning solution to the
-%  grading-as-ranking problem, using assignment grades as feedback instead
-%  of pairwise judgments.}
-%  \label{fig:assignment-based}
-%  \end{center}
-%\end{figure}
+\input{sec-active-learning}
