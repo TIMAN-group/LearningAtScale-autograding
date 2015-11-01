@@ -13,7 +13,7 @@ questions with short textual answers, and 3) writing assessments in
 natural language text.
 
 More specifically, the case exercises were developed using
-WhenKnowingMatters (WKM) web-based case formulation
+the WhenKnowingMatters (WKM) web-based case formulation
 software\footnote{\url{http://www.whenknowingmatters.com}} which
 facilitates development and exchange of text-based cases while allowing
 students to objectify their observations from a case and manipulate them in
@@ -51,7 +51,12 @@ elements of critical thinking and communication:
  disciplinary content.
 \end{enumerate}
 
-The instructor also created a ``gold standard" assessment for the
+
+\input{table-grade-stats.tex}
+
+We report the mean rank and standard deviation for each of these six labels
+in Table~\ref{table:grade-stats}; where 1 corresponds to novice and 5 to
+expert. The instructor also created a ``gold standard'' assessment for the
 assignment case, which is available for the automated grading tool to use.
 
 Figure~\ref{fig:example} shows an example of a very simple case and a typical
@@ -61,16 +66,19 @@ structured data. The student assessment is seen to be a semi-structured
 text with indented structures based on a scaffold provided by the
 instructor. Multiple tags indicate different kinds of answers, including,
 e.g., selected content from the original case description, selected lab
-tests, and text input by the student reflecting his/her assessment.
+tests (both are ``observations''), and text input by the student reflecting
+his/her assessment (called ``analysis'').
 
 Because of the complexity, automated grading of such an assignment is very
-challenging. First, because of variations across different assignments, it
-is almost impossible to learn from the grading results of one assignment to
-automate grading of another, even though such an ``inter-assignment"
-automated grading is ideal.  We thus focus on a more realistic setting of
-attempting to automate the grading after the instructor has already graded
-some assignments, which we may refer to as ``intra-assignment" automated
-grading, which, strictly speaking, is actually semi-automatic grading.  Our
-goal is thus to study whether and how we can leverage machine learning to
-learn from the graded assignments to automatically predict the grades for
-the rest of the ungraded assignments.
+challenging. First, due to variations across different assignments, it is
+almost impossible to learn from the grading results of one assignment to
+automate grading of another (often called ``transfer learning''), even
+though such an ``inter-assignment'' automated grading is ideal.  We thus
+focus on a more realistic setting of attempting to automate the grading
+after the instructor has already graded some assignments, which we may
+refer to as ``intra-assignment'' automated grading, which, strictly
+speaking, is actually semi-automatic grading.  Our goal is thus to study
+whether and how we can leverage machine learning to learn from the graded
+assignments to reduce the grading burden on an instructor, either by
+directly predicting grades or by providing a ranking as a scaffolding for
+assigning grades.

@@ -4,25 +4,7 @@ In this section, we perform some experiments that focus specifically on the
 (semi-) supervised methods detailed in the previous section, which we view
 as the starting point towards a more comprehensive method for grading
 complex assignments. We detail our empirical findings on an example
-dataset to evaluate our proposed methods.
-
-\subsection{Dataset}
-
-Our data consist of $n = 107$ student submissions for one medical case
-analysis assignment in a veterinary medicine course at XXXX institution.
-Each was graded along six different rubric dimensions (abbreviations
-bolded): \textbf{analysis} of argument, approach in seeking
-\textbf{answers}, \textbf{application} of disciplinary content,
-\textbf{clarity} of communication, judgment of \textbf{quality} of
-information, and developing relevant refining \textbf{questions}. Student
-submissions were given an ordinal rating on a five level scale from novice
-(1) to expert (5) along each dimension---we report the mean rank and
-standard deviation for each of the six labels in
-Table~\ref{table:grade-stats}. The ordinal regression task is then to
-learn a separate function to predict the rating for each of the six
-dimensions using features extracted from the student documents.
-
-\input{table-grade-stats.tex}
+dataset of $n=107$ student submissions to evaluate our proposed methods.
 
 \subsection{Ordinal Regression Feasibility Study}
 
