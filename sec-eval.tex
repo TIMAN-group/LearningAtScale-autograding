@@ -42,7 +42,16 @@ rank''~\cite{Joachims:2002:KDD, Liu:2009}, and there are a wide variety of metho
 available that one can use to learn a ranking function for documents given
 a set of available features.  
 
-One particular method that we will explore is ......  Before we explore the efficacy of such an approach, however, we must first
+One particular method that we will explore is a pairwise solution, where
+the problem of learning to create ranked lists is decomposed into the
+problem of determining preferences for pairs of items (i.e., whether $a$ should
+appear before $b$). This decomposition allows the application of standard
+binary classifiers for solving the preference prediction problem. The model
+learned can then be applied to unseen examples to produce a score, and
+ranked lists are created by using the model to produce a score for each
+item.
+
+Before we explore the efficacy of such an approach, however, we must first
 redefine some measure by which we can measure performance. Because the
 system is no longer predicting a rating for each assignment, we cannot use
 MAE as before.
