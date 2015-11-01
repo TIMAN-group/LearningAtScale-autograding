@@ -120,10 +120,15 @@ elements in the reference ranking. NDPM is computed as
 \[
     NDPM = \frac{2n_d + t_x}{2(n_c + n_d + t_x)}.
 \]
-Note that this is a \emph{distance} measure, so a value of $0$ would
-indicate a perfect ranking. Indeed, if we compute NDPM for the example
-rankings above, we achieve this result. Thus, we feel that NDPM is perhaps
-the most appropriate measure for evaluating automatic grading systems that
-produce an ordering of assignments as their output.
+This can also be described as the distance between the system ranking and
+the reference ranking divided by the maximum achievable distance any
+ranking could have from the reference ranking. Thus, a value of $0.3$ would
+indicate that the system ranking was 30\% of the distance away from the
+reference ranking than the reverse of the reference ranking.  Since this is
+a normalized \emph{distance} measure, a value of $0$ would indicate a
+perfect ranking. Indeed, if we compute NDPM for the example rankings above,
+we achieve this result. Thus, we feel that NDPM is perhaps the most
+appropriate measure for evaluating automatic grading systems that produce
+an ordering of assignments as their output.
 
 \input{sec-active-learning}
