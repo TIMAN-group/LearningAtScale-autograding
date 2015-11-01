@@ -1,18 +1,44 @@
 \section{Efficiently Utilizing Human Judgments with Active Learning}
+
+\subsection{Basic idea}
+
+As in all supervised learning approaches, 
+the accuracy of  the automated grader based on learning to rank. depends
+on the quantity and quality of the training examples available for the 
+learner to use. Ideally, we would like human graders to provide
+ as many graded examples as possible, but this would
+reduce the benefit of an automated grader. Indeed,
+if a human grader completes grading all the assignments,
+there would be no need for the automated grader!
+However, if there are insufficient training examples 
+to learn from, the automated grader migh have a low accuracy,
+which would further require more human effort on 
+``post-editing" the grading results of the automated grader. 
+Thus there is clearly a complicated tradeoff between
+the effort of manual grading and the utility of the trained
+ grader that may have to be empirically optimized in an application-specific way.
+
+However, it is very clear that if we ask human graders to grade
+a certain amount of assignments, we would like the
+graded assignments to be as useful to the automated grader as possible.
+Just randomly selecting a sample of assignments for manual grading
+is not the best way. 
+\ignore{
 A serious drawback of the supervised learning approach is the lack
 of early feedback in the instructor--machine collaboration. In the
 supervised approach, a model is learned on some subset of the assignments
 to predict the grades of the remaining assignments, but the process of
 selecting a subset of assignments for grading is not guided. It is possible
 that randomly selecting assignments to grade results in mostly redundant
-information being given to the grading model. Instead, a better approach
-could be to employ active learning to allow the machine learning model to
+information being given to the grading model. Instead, }
+A natural solution to this problem is to employ 
+active learning to allow the machine learning model to
 guide the instructor in providing the supervision to make the most
 effective use of his/her effort.
 
-Building on these observations, we propose the following ``pairwise active
+Building on these observations, we thus propose the following ``pairwise active
 learning to rank'' model for automatic grading, which will employ the
-following process:
+following process where $k_1$ is a parameter that can be empirically set. 
 
 \begin{enumerate}
   \item Ask the instructor for comparative judgments on $k_1$ pairs of
@@ -30,6 +56,8 @@ following process:
 \end{enumerate}
 Instantiations of this general approach will differ mainly in
 steps~\ref{al:learn-model-step}~and~\ref{al:select-training-step}.
+
+\subsection{Experiments}
 
 To study whether our proposed active learning approach better utilizes
 human judgments during the grading process, we performed the following
@@ -57,13 +85,11 @@ sampling~\cite{Settles:2012}) and repeat the training/evaluation loop. Our
 particular model choice was a linear SVM provided through the \textsc{MeTA}
 toolkit.
 
-We compare this active learning scenario with two different baselines. The
-first is a simple na\"ive approach that ranks all student assignments by
-their BM25 similarity with the instructor document as a query. Our other
-baseline is the exact same process as above, but instead of selecting the
-most uncertain pair in the unlabeled data we select one uniformly at
-random. This will allow us to see whether the uncertainty sampling approach
-is truly helping to guide the learning process to make more efficient
+We compare this active learning scenario with a random learning baseline,
+which is the exact same process as above, but instead of selecting the most
+uncertain pair in the unlabeled data we select one uniformly at random.
+This will allow us to see whether the uncertainty sampling approach is
+truly helping to guide the learning process to make more efficient
 supervision choices or not.
 
 \begin{figure}
@@ -82,30 +108,29 @@ supervision choices or not.
         table [x=training-size, y=AVG-NDPM, y error=std-deviation, col
           sep=comma] {data/active-learning.csv};
 
-      \addplot[mark=none, color=green]
-        coordinates {(0, 0.344637) (500, 0.344637)};
+%      \addplot[mark=none, color=green]
+%        coordinates {(0, 0.344637) (500, 0.344637)};
 
       \legend{Random learning, Active learning, BM25 similarity}
     \end{axis}
   \end{tikzpicture}
-  \caption{A comparison between a no-learning solution, a randomized
-  learning solution, and an active learning solution to the
-  grading-as-ranking problem. Reported is the average NDPM (lower is
-  better) over 5 runs, with error bars indicating one standard deviation.}
+  \caption{A comparison between a randomized learning solution and an
+  active learning solution to the grading-as-ranking problem. Reported is
+  the average NDPM (lower is better) over 5 runs, with error bars indicating
+  one standard deviation.}
   \label{fig:active-learning}
   \end{center}
 \end{figure}
 
-Our results are summarized in Figure~\ref{fig:active-learning}. We can
-immediately observe that the learning-based approaches significantly
-outperform the na\"ive text-similarity ranking baseline, which should be
-expected. More importantly is the difference between the active learning
-method (blue line) and the random learning method (red line). We can see
+Our results are summarized in Figure~\ref{fig:active-learning}. Recall that
+a NDPM value of $0.3$ indicates that a system ranking was 30\% of the
+maximal achievable distance away from the reference ranking. We can see
 that even at a small fraction of all of the assignment pairs, the active
-learning approach is able to achieve better NDPM than simply learning at
-random. This is consistent with our hypothesis that active learning as part
-of an automatic grading system can make more effective use of an
-instructor's time than a purely passive supervised approach.
+learning approach (blue line) is able to achieve better NDPM than simply
+learning at random (red line). This is consistent with our hypothesis that
+active learning as part of an automatic grading system can make more
+effective use of an instructor's time than a purely passive supervised
+approach.
 
 \begin{figure}
   \begin{center}
@@ -133,32 +158,39 @@ instructor's time than a purely passive supervised approach.
         table [x=num-distinct, y=NDPM, col sep=comma]
         {data/results-num-examined5.csv};
 
-      \addplot[mark=none, color=green]
-        coordinates {(0, 0.344637) (100, 0.344637)};
+%      \addplot[mark=none, color=green]
+%        coordinates {(0, 0.344637) (100, 0.344637)};
     \end{axis}
   \end{tikzpicture}
   \caption{The number of unique assignments an instructor must see in order
   to achieve a specific NDPM. Pictured are five different simulations, each
-  with a different seed set of $k_1 = 10$ pairs. The green line corresponds
-  to the same BM25 similarity baseline as in
-  Figure~\ref{fig:active-learning}.}
+  with a different seed set of $k_1 = 10$ pairs.}
   \label{fig:num-examined}
   \end{center}
 \end{figure}
 
-How much instructor effort goes in to judging 200 assignment pairs? This is
-difficult to quantify in a simulation such as this one. To attempt to
-understand the effort expenditure to achieve a certain NDPM, we ran five
-randomized experiments using our pairwise learning to rank approach, but
-kept track at each iteration the number of unique assignments that appeared
-in assignment pairs presented to the instructor.
-Figure~\ref{fig:num-examined} summarizes our results. In order to drive
-down the NDPM significantly, it is unfortunately the case that the
-instructor does see a large fraction of the assignment space. It is
-important, then, to ensure that providing a pairwise judgment takes as
-little effort as possible relative to assigning a numeric or letter grade.
-An interesting future direction is then to design an interactive system that
-attempts to drive the cost of providing judgments down as much as possible.
+How much instructor effort goes in to judging 200 assignment pairs? This
+may initially seem like a lot, but each pair is not labeled in
+isolation---labeling many pairs will inevitably include assignments that
+have already been seen before. These familiar assignments make providing a
+pairwise judgment faster than it would be if done ``cold''. In general, it
+is also reasonable to assume that the effort involved in simply saying
+whether assignment $a$ is better than assignment $b$ is lower than having
+to consult a rubric to assign an actual point (or letter) value.
+
+The amount of instructor effort spent on pairs is difficult to quantify in
+a simulation such as this one. To attempt to understand the effort
+expenditure to achieve a certain NDPM, we ran five randomized experiments
+using our pairwise learning to rank approach, but kept track at each
+iteration the number of unique assignments that appeared in assignment
+pairs presented to the instructor.  Figure~\ref{fig:num-examined}
+summarizes our results. In order to drive down the NDPM significantly, it
+is unfortunately the case that the instructor does see a large fraction of
+the assignment space. It is important, then, to ensure that providing a
+pairwise judgment takes as little effort as possible relative to assigning
+a numeric or letter grade.  An interesting future direction is then to
+design an interactive system that attempts to drive the cost of providing
+judgments down as much as possible.
 
 %\begin{figure}
 %  \begin{center}
