@@ -175,14 +175,12 @@ any rubric dimension or overall quality with consideration of multiple
 dimensions), and a human grader can  then easily segment the list into any
 desired grade levels.  In comparison with predicting exact grades, such a
 ranking formulation also offers a natural way to engage humans in
-validating and finalizing the grades.
-
-For evaluation, although retrieval measures such as Mean Average Precision
-(MAP) or normalized Discounted Cumulative Gain (nDCG) are commonly used for
-evaluating a ranked list, we suggest that the Normalized Distance-based
-Performance Measure (NDPM)~\cite{Yao:1995:JASIS} is a better measure for
-our ranking problem since it can better handle many ties that inevitably
-exist in our case.
+validating and finalizing the grades.  For evaluation, although retrieval
+measures such as Mean Average Precision (MAP) or normalized Discounted
+Cumulative Gain (nDCG) are commonly used for evaluating a ranked list, we
+suggest that the Normalized Distance-based Performance Measure
+(NDPM)~\cite{Yao:1995:JASIS} is a better measure for our ranking problem
+since it can better handle the many inevitable ties that occur in our case.
 
 In practice, an automated grader must be integrated with a human grader so
 as to minimize the overall effort of the human grader while ensuring a
@@ -192,22 +190,28 @@ examples (i.e., manually graded assignments) as possible, which, however,
 would incur more human effort. To optimize human-machine collaboration and
 enable a flexible trade-off between human effort and grading accuracy, we
 propose the following sequential training process based on active machine
-learning: 1) a human grader first grades a small number of assignments as
-the initial training set (this could be either numeric or letter grades, or
-pairwise judgments); 2) the machine would learn from the initial set,
-and identify the next ``best'' example (i.e., assignment) to label and
-present it for human to grade (where ``best'' here means that the example
-is most valuable to help the automated grader improve its accuracy); 3)
-a human would grade the nominated example to increase the size of the
-training set by one; 4) the machine would learn from the augmented training
-set and repeatedly present a new example for the human to grade until it
-reaches a desired level of accuracy, at which point, the process stops and
-the human grader would segment the final ranked list to generate grades for
-all the assignments. Our experiment results show that such an active
-learning process is much more effective than batch training.
+learning:
+\begin{enumerate*}[label=\itshape(\arabic*)\upshape]
+  \item a human grader first grades a small number of assignments as the
+    initial training set (this could be either numeric or letter grades, or
+    pairwise judgments);
+  \item the machine would learn from the initial set, and identify the next
+    ``best'' example (i.e., assignment) to label and present it for human
+    to grade (where ``best'' here means that the example is most valuable
+    to help the automated grader improve its accuracy);
+  \item a human would grade the nominated example to increase the size of
+    the training set by one;
+  \item the machine would learn from the augmented training set and
+    repeatedly present a new example for the human to grade until it
+    reaches a desired level of accuracy, at which point, the process stops
+    and the human grader would segment the final ranked list to generate
+    grades for all the assignments.
+\end{enumerate*}
+Our experiment results show that this active learning process is much
+more effective than batch training.
 
-As the first study of this new problem, our study is inevitably limited by
-the size of the data set due to the unavailability of larger data sets; as
-the automated grading technology matures for such assignments, we
-anticipate to have much larger data sets available to further verify our
-observations and conclusions.
+As the first study of this new problem, it is inevitably limited by the
+size of the data set due to the unavailability of larger data sets; as the
+automated grading technology matures for such assignments, we anticipate to
+have much larger data sets available to further verify our observations and
+conclusions.

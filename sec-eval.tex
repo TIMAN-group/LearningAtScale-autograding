@@ -4,8 +4,8 @@ Some of the results from our feasibility study using ordinal regression raise
  the question whether framing the problem of automated grading as
 ordinal regression is appropriate. Indeed, as we will discuss, it appears
 to be more advantageous to frame the problem as one of ranking
-the ungraded assignments, which a human grader can segment  into
-any desired grade levels. 
+the ungraded assignments, which a human grader can segment into
+desired grade levels. 
 
 Specifically, as we observed in
 Tables~\ref{table:feature-comb}~and~\ref{table:feature-comb-clar}, outright
@@ -35,15 +35,15 @@ a good ranking of assignments, an instructor simply needs to assign
 learning problem from attempting to predict an ordinal label for a specific
 assignment to assigning a ranking to a set of assignments. This is a well
 studied area in information retrieval called ``learning to
-rank''~\cite{Joachims:2002:KDD, Liu:2009}, and there are a wide variety of methods
-available that one can use to learn a ranking function for documents given
-a set of available features.  
+rank''~\cite{Joachims:2002:KDD, Manning:2008}, and there are a wide variety
+of methods available that one can use to learn a ranking function for
+documents given a set of features.
 
 One particular method that we will explore is a pairwise solution called a
 Ranking SVM~\cite{Joachims:2002:KDD}, where the problem of learning to
 create ranked lists is decomposed into the problem of determining
 preferences for pairs of items (i.e., whether $a$ should appear before
-$b$). An traditional SVM model is learned on this decomposition, and its
+$b$). A traditional SVM model is learned on this decomposition, and its
 weight vector is used to define a retrieval function that is the dot
 product with a document's feature vector.
 

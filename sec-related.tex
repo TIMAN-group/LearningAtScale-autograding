@@ -69,16 +69,13 @@ but the rubrics are not as complex as those required for medical case
 assessment.
 
 The task of predicting categorical labels with an implicit ranking (ordinal
-variables) is often solved via ordinal regression
-methods~\cite{McCullagh:1980}. These types of variables (and this
-regression method) is very common in studies in the social sciences where
-survey responses are often measured on scales such as (strongly disagree,
-disagree, neutral, agree, strongly agree) which are called Likert
-scales. Our work in predicting the grade labels for different dimensions of
-an assignment's rubric can be seen as yet another application of ordinal
-regression to the many applications already explored. Using machine
-learning for optimizing ranking has been extensively in information
-retrieval~\cite{Liu:2009}; our work explores an interesting novel
-application of online active learning to automated grading where we are
-interested in minimizing the training sample to label while maximizing the
-ranking accuracy over a finite number of known test cases.  
+variables, often the result of surveys on a Likert scale) is often solved
+via ordinal regression methods~\cite{McCullagh:1980}. Our work in
+predicting the grade labels for different dimensions of an assignment's
+rubric can be seen as yet another application of ordinal regression to the
+many applications already explored. Using machine learning for optimizing
+ranking has been extensively in information retrieval~\cite{Manning:2008}; our
+work explores an interesting novel application of online active learning to
+automated grading where we are interested in minimizing the training sample
+to label while maximizing the ranking accuracy over a finite number of
+known test cases.
