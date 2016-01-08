@@ -22,10 +22,27 @@ designed to help instructors manually grade short-answer MOOC assignments
 at scale by allowing them to assign grades to entire clusters of students
 at once~\cite{Brooks:2014:Powergrading}. Hierarchical clustering methods
 were applied in this work to allow the instructor to ``drill down'' as far
-as he/she would like to assign grades and feedback to students. This method
-is general and unsupervised but only explored the short-answer question
-space, leaving more complex assignment outputs (like the outline-form case
-assessments we study here).
+as he/she would like to assign grades and feedback to students. Their
+method, PowerGrading, can be regarded as optimizing the collaboration of
+humans and machines heuristically, but the approach does not take advantage
+of supervised learning from graded examples of instructors, which we
+explore. Furthermore, if a cluster is poorly formed, the grading error can
+be serious no matter how an instructor optimizes the grade assignment to a
+cluster.
+
+Mitros et.\ al.~\cite{Mitros:2013:MITLINC} give a brief overview of
+different strategies for grading and proposed a heuristic workflow to
+optimize the collaboration of assessors in consideration of different costs
+associated with different graders. However, it does not address the
+question of how to optimize the recommendation of assignments for graders
+to grade in order to maximize the effectiveness of the machine learning
+component of their framework, something we seek to address in this paper.
+We could deploy our technology in their framework by modifying the
+threshold strategy (e.g., for cutoffs on a ranked list). Both of these
+methods~\cite{Brooks:2014:Powergrading, Mitros:2013:MITLINC} only explored
+the short-answer question space, leaving semi-automated grading of more
+complex assignment outputs (like the outline-form case assessments we study
+here) unexplored.
 
 Another approach would be to attempt to predict the grades explicitly. One
 branch of work in this direction based on information extraction techniques
