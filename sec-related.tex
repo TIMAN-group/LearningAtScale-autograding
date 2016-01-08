@@ -7,20 +7,25 @@ is related to multiple lines of existing work, which we briefly review below.
 Automated grading has been explored mostly for constrained question
 types where the correct answer has a certain, well known form. Programming
 assignments, for example, have long been a target for automatic
-grading~\cite{Forsythe:1965:CACM, Hext:1969:CACM, Helmick:2007:ITICSE,
-Martin:1973:SIGCSE} as their very medium can easily be leveraged for
-providing ``yes'' or ``no'' feedback with respect to programmatic
-correctness.
+grading~\cite{Forsythe:1965:CACM, Helmick:2007:ITICSE} as their very medium
+can easily be leveraged for providing ``yes'' or ``no'' feedback with
+respect to programmatic correctness. For specific assignment types, more
+sophisticated techniques like edit-distance of canonical representations
+has been explored~\cite{Alur:2013:IJCAI}. Recent efforts have focused on
+providing feedback to students about their programs by leveraging
+structural similarities in the code itself to allow feedback to be provided
+to many assignments at once that share particular
+features~\cite{Nguyen:2014:WWW, Piech:2015:ICML}.
 
-Many techniques for short-answer grading have been explored. Recently,
-clustering-based techniques have been applied to tools designed to help
-instructors manually grade MOOC assignments at scale by allowing them to
-assign grades to entire clusters of students at
-once~\cite{Brooks:2014:Powergrading}. Hierarchical clustering methods were
-applied in this work to allow the instructor to ``drill down'' as far as
-he/she would like to assign grades and feedback to students. This method
-is general and unsupervised, but cannot provide the instructor with a
-suggestion for the grade or feedback so this work must be done manually.
+In this vein, clustering-based techniques have been applied to tools
+designed to help instructors manually grade short-answer MOOC assignments
+at scale by allowing them to assign grades to entire clusters of students
+at once~\cite{Brooks:2014:Powergrading}. Hierarchical clustering methods
+were applied in this work to allow the instructor to ``drill down'' as far
+as he/she would like to assign grades and feedback to students. This method
+is general and unsupervised but only explored the short-answer question
+space, leaving more complex assignment outputs (like the outline-form case
+assessments we study here).
 
 Another approach would be to attempt to predict the grades explicitly. One
 branch of work in this direction based on information extraction techniques
@@ -35,15 +40,16 @@ answers with a gold standard answer using a wide variety of similarity
 functions~\cite{Mohler:2009:EACL}.
 
 Grading of long-form student answers has also been
-explored~\cite{Balfour:2013, Chen:2014:IRRODL}. In
+explored~\cite{Balfour:2013}. In
 \textsc{CarmelTC}~\cite{Rose:2003:HLT-NAACL-EDUC} a combination of topic
 modeling and text classification approaches are taken to score student
 essays. The system attempts to determine which ``key components'' have been
 mentioned in each essay and uses this information to suggest to students
 what components they may be missing. Approaches that purely use document
 similarity metrics~\cite{Duwairi:2006:CHB} or purely supervised
-classifiers~\cite{Larkey:1998:SIGIR} have been used for grading as well, but the rubrics
-are not as complex as those required for medical case assessment. 
+classifiers~\cite{Larkey:1998:SIGIR} have been used for grading as well,
+but the rubrics are not as complex as those required for medical case
+assessment.
 
 The task of predicting categorical labels with an implicit ranking (ordinal
 variables) is often solved via ordinal regression

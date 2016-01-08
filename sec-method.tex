@@ -223,7 +223,10 @@ labeled examples, and then apply the learned model to the remaining
 unlabeled examples. To simulate this, we ran the following experiments: for
 each rubric dimension, we took the collection of student documents and
 randomly split it into two groups (the training and test sets) each
-containing 50\% of the data. A function is learned based on the labeled
+containing 50\% of the data\footnote{We do not use something like 10-fold
+cross validation due to the small size of the available labeled data to
+ensure that the training and test sets can be as representative of the
+actual data as possible.}. A function is learned based on the labeled
 training set which is then used to label the examples in the test set. We
 compute the \textbf{mean absolute error} (MAE), defined as
 \[
