@@ -1,4 +1,5 @@
 \section{Related Work}
+\label{sec:related}
 
 To the best of our knowledge, no previous work has studied how to automatically grade
 a complex assignment such as a medical case assessment. However, our work
@@ -36,7 +37,7 @@ optimize the collaboration of assessors in consideration of different costs
 associated with different graders. However, it does not address the
 question of how to optimize the recommendation of assignments for graders
 to grade in order to maximize the effectiveness of the machine learning
-component of their framework, something we seek to address in this paper.
+component of their framework, a goal we seek to achieve in this paper.
 We could deploy our technology in their framework by modifying the
 threshold strategy (e.g., for cutoffs on a ranked list). Both of these
 methods~\cite{Brooks:2014:Powergrading, Mitros:2013:MITLINC} only explored
@@ -46,9 +47,11 @@ here) unexplored.
 
 Another approach would be to attempt to predict the grades explicitly. One
 branch of work in this direction based on information extraction techniques
-focuses on extracting fixed patterns from the answer: if the pattern (or
-set of patterns) is matched, the question is correct, otherwise it receives
-partial or no credit. Many methods require the manual construction of these
+focuses on matching expected patterns in the answer;
+%: if the pattern (or
+%set of patterns) is matched, the question is correct, otherwise it receives
+%partial or no credit.
+ Many methods require the manual construction of these
 patterns~\cite{Mitchell:2002:ICAA, Leacock:2003:CatH}, while others attempt to
 learn them from large training datasets~\cite{Pulman:2005:EdAppsNLP}. In either
 case, the methods require strong supervision support to be effective.  Other
@@ -70,10 +73,15 @@ assessment.
 
 The task of predicting categorical labels with an implicit ranking (ordinal
 variables, often the result of surveys on a Likert scale) is often solved
-via ordinal regression methods~\cite{McCullagh:1980}. Our work in
-predicting the grade labels for different dimensions of an assignment's
-rubric can be seen as yet another application of ordinal regression to the
-many applications already explored. Using machine learning for optimizing
+via ordinal regression methods~\cite{McCullagh:1980}; our work
+% in
+%predicting the grade labels
+% for different dimensions of an assignment's
+%rubric can be seen as 
+adds yet another application of ordinal regression to the
+many 
+%applications
+ already explored. Using machine learning for optimizing
 ranking has been extensively in information retrieval~\cite{Manning:2008}; our
 work explores an interesting novel application of online active learning to
 automated grading where we are interested in minimizing the training sample
