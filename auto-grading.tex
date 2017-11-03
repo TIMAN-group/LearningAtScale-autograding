@@ -2,7 +2,7 @@
 
 % Arabic page numbers for submission.
 % Remove this line to eliminate page numbers for the camera ready copy
-\pagenumbering{arabic}
+%\pagenumbering{arabic}
 
 % Load basic packages
 \usepackage{balance}  % to better equalize the last page
@@ -30,10 +30,10 @@
 % re-using, if desired).  Use \emtpyauthor when submitting for review
 % so you remain anonymous.
 \def\plaintitle{An Exploration of Automated Grading of Complex Assignments}
-\def\plainauthor{First Author, Second Author, Third Author}
+\def\plainauthor{Chase Geigle, ChengXiang Zhai, Duncan Ferguson}
 \def\emptyauthor{}
 \def\plainkeywords{Automatic grading; ordinal regression; supervised
-learning; active learning; text mining}
+learning; learning to rank; active learning; text mining}
 
 % llt: Define a global style for URLs, rather that the default one
 \makeatletter
@@ -80,21 +80,12 @@ learning; active learning; text mining}
 
 \title{\plaintitle}
 
-\numberofauthors{3}
+\numberofauthors{1}
 \author{%
-  \alignauthor{Leave Authors Anonymous\\
-    \affaddr{for Submission}\\
-    \affaddr{City, Country}\\
-    \email{e-mail address}}\\
-  \alignauthor{Leave Authors Anonymous\\
-    \affaddr{for Submission}\\
-    \affaddr{City, Country}\\
-    \email{e-mail address}}\\
-  \alignauthor{Leave Authors Anonymous\\
-    \affaddr{for Submission}\\
-    \affaddr{City, Country}\\
-    \email{e-mail address}}\\
-}
+  \alignauthor{Chase Geigle, ChengXiang Zhai, Duncan Ferguson\\
+    \affaddr{University of Illinois at Urbana-Champaign}\\
+    $\{$geigle1,czhai,dcf$\}$@illinois.edu}
+  }
 
 \maketitle
 
@@ -109,17 +100,18 @@ experiments that it is feasible to automate grading of such assignments
 provided that the instructor can grade a number of examples. We further
 study how to integrate an automated grader with human grading and propose
 to frame the problem as learning to rank assignments to exploit pairwise
-preference judgments and use NDPM as a measure for evaluation of the accuracy of ranking.  We then
-propose a sequential pairwise online active learning strategy to minimize
-the effort of human grading and optimize the collaboration of human graders
-and an automated grader.  Experiment results show that this strategy is
-indeed effective and can substantially reduce human effort as compared with
-randomly sampling assignments for manual grading.
+preference judgments and use NDPM as a measure for evaluation of the
+accuracy of ranking.  We then propose a sequential pairwise online active
+learning strategy to minimize the effort of human grading and optimize the
+collaboration of human graders and an automated grader.  Experiment results
+show that this strategy is indeed effective and can substantially reduce
+human effort as compared with randomly sampling assignments for manual
+grading.
 \end{abstract}
 
 \keywords{\plainkeywords}
 
-\category{H.2.8}{Database Applications}{Data mining}
+%\category{H.2.8}{Database Applications}{Data mining}
 
 \input{sec-intro}
 
@@ -135,7 +127,9 @@ randomly sampling assignments for manual grading.
 
 \section{Acknowledgments}
 
-Anonymized for blind reviewing.
+This material is based upon work supported by the National Science
+Foundation Graduate Research Fellowship Program under Grant Number
+DGE-1144245.
 
 \balance
 
