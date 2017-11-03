@@ -1533,13 +1533,24 @@
 \global\copyrightetc{\ } %  Need to have 'something' so that adequate space is left for pasting in a line if "confinfo" is supplied.
 
 \toappear{
-Paste the appropriate copyright statement here. ACM now supports three different copyright statements:\\
-$\bullet$ ACM copyright: ACM holds the copyright on the work. This is the historical approach.\\
-$\bullet$ License: The author(s) retain copyright, but ACM receives an exclusive publication license.\\
-$\bullet$ Open Access: The author(s) wish to pay for the work to be open access. The additional fee must be paid to ACM.\\
-This text field is large enough to hold the appropriate release statement assuming it is single spaced. 
-\newline
-\textcolor{red}{Every submission will be assigned their own unique DOI string to be included here.}
+ Permission to make digital or hard copies of all or part of this work for
+ personal or classroom use is granted without fee provided that copies are
+ not made or distributed for profit or commercial advantage and that copies
+ bear this notice and the full citation on the first page. Copyrights for
+ components of this work owned by others than the author(s) must be
+ honored. Abstracting with credit is permitted. To copy otherwise, or
+ republish, to post on servers or to redistribute to lists, requires prior
+ specific permission and/or a fee. Request permissions from
+ Permissions@acm.org.
+
+ \emph{L@S 2016}, April 25 - 26, 2016, Edinburgh, Scotland UK
+
+ Copyright is held by the owner/author(s). Publication rights licensed to
+ ACM.
+
+ ACM 978-1-4503-3726-7/16/04 \$15.00
+
+ DOI: http://dx.doi.org/10.1145/2876034.2876049
 }
 \clubpenalty=10000 
 \widowpenalty = 10000
